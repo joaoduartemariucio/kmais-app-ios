@@ -112,6 +112,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = F64877CE303D16C5009A2E5C /* Build configuration list for PBXNativeTarget "kmais-app-ios" */;
 			buildPhases = (
+				F6FE1A0000000010009A2E5C /* SwiftLint */,
 				F64877A6303D16C3009A2E5C /* Sources */,
 				F64877A7303D16C3009A2E5C /* Frameworks */,
 				F64877A8303D16C3009A2E5C /* Resources */,
@@ -220,6 +221,28 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		F6FE1A0000000010009A2E5C /* SwiftLint */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = SwiftLint;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if command -v swiftlint >/dev/null 2>&1; then\n  swiftlint lint --quiet --config \"${SRCROOT}/.swiftlint.yml\"\nelse\n  echo \"warning: SwiftLint não instalado — as regras de fronteira entre camadas não foram verificadas.\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXResourcesBuildPhase section */
 		F64877A8303D16C3009A2E5C /* Resources */ = {
