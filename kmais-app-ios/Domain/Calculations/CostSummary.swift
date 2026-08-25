@@ -1,6 +1,6 @@
 import Foundation
 
-struct CostSummary: Hashable, Sendable {
+nonisolated struct CostSummary: Hashable, Sendable {
     let fuelCost: Decimal
     let serviceCost: Decimal
     let distance: Double

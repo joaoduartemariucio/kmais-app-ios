@@ -1,12 +1,12 @@
 import Foundation
 
-enum RepositoryError: Error {
+nonisolated enum RepositoryError: Error {
     case vehicleNotFound(UUID)
     case entryNotFound(UUID)
     case persistenceFailed(underlying: Error)
 }
 
-extension RepositoryError: LocalizedError {
+nonisolated extension RepositoryError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .vehicleNotFound:

@@ -1,6 +1,6 @@
 import Foundation
 
-enum Cost {
+nonisolated enum Cost {
     static func summary(fuel: [FuelEntry], services: [ServiceEntry]) -> CostSummary {
         let odometers = fuel.map(\.odometer) + services.map(\.odometer)
         var distance = 0.0

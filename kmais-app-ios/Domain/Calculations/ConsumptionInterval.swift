@@ -1,6 +1,6 @@
 import Foundation
 
-struct ConsumptionInterval: Hashable, Sendable {
+nonisolated struct ConsumptionInterval: Hashable, Sendable {
     let startDate: Date
     let endDate: Date
     let startOdometer: Double

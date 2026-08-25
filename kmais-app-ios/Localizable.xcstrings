@@ -248,6 +248,17 @@
         }
       }
     },
+    "Running on a temporary store — changes will not be saved.": {
+      "extractionState": "manual",
+      "localizations": {
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rodando em um armazenamento temporário — as alterações não serão salvas."
+          }
+        }
+      }
+    },
     "Screens land in the next step.": {
       "extractionState": "manual",
       "localizations": {

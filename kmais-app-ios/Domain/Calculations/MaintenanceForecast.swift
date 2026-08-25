@@ -1,6 +1,6 @@
 import Foundation
 
-struct MaintenanceForecast: Hashable, Sendable {
+nonisolated struct MaintenanceForecast: Hashable, Sendable {
     enum Trigger: Hashable, Sendable {
         case distance
         case calendar

@@ -1,6 +1,6 @@
 import Foundation
 
-struct ConsumptionAnomaly: Hashable, Sendable {
+nonisolated struct ConsumptionAnomaly: Hashable, Sendable {
     enum Kind: Hashable, Sendable {
         case odometerWentBackwards(previous: Double)
         case odometerUnchanged(previous: Double)

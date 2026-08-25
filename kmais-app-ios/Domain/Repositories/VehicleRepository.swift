@@ -1,6 +1,6 @@
 import Foundation
 
-protocol VehicleRepository: Sendable {
+nonisolated protocol VehicleRepository: Sendable {
     func all(includingArchived: Bool) async throws -> [Vehicle]
     func vehicle(id: UUID) async throws -> Vehicle?
     func save(_ vehicle: Vehicle) async throws

@@ -1,6 +1,6 @@
 import Foundation
 
-enum Odometer {
+nonisolated enum Odometer {
     static func current(_ samples: [OdometerSample]) -> Double? {
         samples.sortedChronologically().last?.odometer
     }

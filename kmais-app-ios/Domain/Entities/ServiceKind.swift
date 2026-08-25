@@ -1,6 +1,6 @@
 import Foundation
 
-enum ServiceKind: String, Codable, CaseIterable, Sendable {
+nonisolated enum ServiceKind: String, Codable, CaseIterable, Sendable {
     case oilChange
     case oilFilter
     case airFilter

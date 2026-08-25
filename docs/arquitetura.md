@@ -2,7 +2,9 @@
 
 Três camadas dentro de um único target do app. A separação é por pasta e por
 convenção — não por módulo. Veja o [ADR 0001](adr/0001-arquitetura.md) para o
-que isso garante e o que não garante.
+que isso garante e o que não garante, e as
+[decisões de implementação](decisoes-de-implementacao.md) para o porquê das
+escolhas que não se leem no código, já que ele não tem comentários.
 
 ```mermaid
 graph TD

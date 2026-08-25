@@ -1,6 +1,6 @@
 import Foundation
 
-enum Consumption {
+nonisolated enum Consumption {
     static func intervals(from records: [FuelEntry]) -> [ConsumptionInterval] {
         var intervals: [ConsumptionInterval] = []
         var open: FuelEntry?

@@ -1,6 +1,6 @@
 import Foundation
 
-enum Maintenance {
+nonisolated enum Maintenance {
     static let averageDaysPerMonth = 365.25 / 12
 
     static func averageKilometersPerDay(_ samples: [OdometerSample]) -> Double? {

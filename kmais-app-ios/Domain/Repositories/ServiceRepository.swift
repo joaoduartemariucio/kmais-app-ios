@@ -1,6 +1,6 @@
 import Foundation
 
-protocol ServiceRepository: Sendable {
+nonisolated protocol ServiceRepository: Sendable {
     func entries(vehicleID: UUID) async throws -> [ServiceEntry]
     func rules(vehicleID: UUID) async throws -> [ServiceRule]
 

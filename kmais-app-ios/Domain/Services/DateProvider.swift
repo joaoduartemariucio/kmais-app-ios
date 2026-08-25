@@ -1,6 +1,6 @@
 import Foundation
 
-protocol DateProvider: Sendable {
+nonisolated protocol DateProvider: Sendable {
     var now: Date { get }
     var calendar: Calendar { get }
 }
