@@ -6,7 +6,8 @@ struct KmaisApp: App {
 
     var body: some Scene {
         WindowGroup {
-            RootView(dependencies: dependencies)
+            RootView()
+                .environment(\.dependencies, dependencies)
         }
     }
 }

@@ -1,34 +1,35 @@
-# Regras de fronteira entre camadas.
-#
-# Leia junto com docs/adr/0001-arquitetura.md: a primeira regra é garantia real,
-# as outras duas são convenção verificada por nome. Como Domain, Data e
-# Presentation vivem no mesmo módulo, não existe `import` entre elas para o
-# linter observar.
-
 included:
   - kmais-app-ios
 
+# `excluded` replaces the rule default (which already carried `id`) rather than
+# adding to it, so `id` has to be repeated here. `of` is an enum case label
+# (`duplicate(of:)`); renaming it for the linter would make the API worse.
+identifier_name:
+  excluded:
+    - id
+    - of
+
 custom_rules:
   domain_no_swiftui:
-    name: "Domain sem SwiftUI"
+    name: "Domain must not import SwiftUI"
     included: ".*/Domain/.*\\.swift"
     regex: "import\\s+SwiftUI"
     excluded_match_kinds: [comment, doccomment, string]
-    message: "Domain importa apenas Foundation. Se o tipo precisa de SwiftUI, ele pertence a Presentation."
+    message: "Domain imports Foundation only. A type that needs SwiftUI belongs in Presentation."
     severity: error
 
   domain_no_swiftdata:
-    name: "Domain sem SwiftData"
+    name: "Domain must not import SwiftData"
     included: ".*/Domain/.*\\.swift"
     regex: "import\\s+SwiftData"
     excluded_match_kinds: [comment, doccomment, string]
-    message: "Domain importa apenas Foundation. Se o tipo precisa de SwiftData, ele pertence a Data."
+    message: "Domain imports Foundation only. A type that needs SwiftData belongs in Data."
     severity: error
 
   presentation_no_data_types:
-    name: "Presentation sem tipos de Data"
+    name: "Presentation must not reference Data types"
     included: ".*/Presentation/.*\\.swift"
     regex: "\\b(VehicleModel|FuelEntryModel|ServiceEntryModel|ServiceRuleModel|KmaisSchema|ModelContext|ModelContainer|SwiftData[A-Za-z]+Repository)\\b"
     excluded_match_kinds: [comment, doccomment, string]
-    message: "Presentation conversa só com os protocolos de Domain. Este tipo é da camada Data."
+    message: "Presentation talks to Domain protocols only. This type belongs to the Data layer."
     severity: error

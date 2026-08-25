@@ -3,7 +3,6 @@ import SwiftData
 
 @ModelActor
 actor SwiftDataFuelEntryRepository: FuelEntryRepository, SwiftDataRepository {
-
     func entries(vehicleID: UUID) async throws -> [FuelEntry] {
         let descriptor = FetchDescriptor<FuelEntryModel>(
             predicate: #Predicate { $0.vehicle?.id == vehicleID },

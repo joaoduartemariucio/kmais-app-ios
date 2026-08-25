@@ -3,7 +3,6 @@ import SwiftData
 
 @ModelActor
 actor SwiftDataServiceRepository: ServiceRepository, SwiftDataRepository {
-
     func entries(vehicleID: UUID) async throws -> [ServiceEntry] {
         let descriptor = FetchDescriptor<ServiceEntryModel>(
             predicate: #Predicate { $0.vehicle?.id == vehicleID },
@@ -45,13 +44,6 @@ actor SwiftDataServiceRepository: ServiceRepository, SwiftDataRepository {
         try commit()
     }
 
-    /// Reconcilia por `id`: o que sumiu do conjunto é apagado, o que já existia
-    /// é atualizado no lugar, o resto é inserido.
-    ///
-    /// Apagar tudo e reinserir daria o mesmo estado final e seria bem mais
-    /// curto — e erraria feio: com CloudKit ligado, cada salvamento do
-    /// formulário viraria uma rodada de deletes e inserts para sincronizar, e
-    /// as regras perderiam a identidade que as liga ao histórico.
     func save(_ rules: [ServiceRule], vehicleID: UUID) async throws {
         guard let vehicle = try vehicleModel(id: vehicleID) else {
             throw RepositoryError.vehicleNotFound(vehicleID)

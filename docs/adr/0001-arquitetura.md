@@ -31,32 +31,40 @@ consistência entre eles.
 
 ## O que a fronteira Presentation ↔ Data garante — e o que não garante
 
-**Não é garantia. É convenção.** Como tudo é um módulo só, não existe `import`
-entre as camadas, e o compilador não tem como recusar um ViewModel que
-instancie `VehicleModel` diretamente.
+Como tudo é um módulo só, não existe `import` entre as camadas, e o compilador
+não tem como recusar um ViewModel que instancie `VehicleModel` diretamente. A
+fronteira é sustentada por SwiftLint, e as duas metades dela têm forças bem
+diferentes.
 
-O que está de fato garantido:
+**Garantia real.** `import SwiftUI` e `import SwiftData` em qualquer arquivo de
+`Domain/` quebram a build. É uma linha de import de verdade, casada por
+`domain_no_swiftui` / `domain_no_swiftdata`, ambas com `severity: error`.
+Verificado com controle positivo: inserindo cada import num arquivo de
+`Domain/`, o SwiftLint sai com código 2 e a fase de build falha.
 
-- `import SwiftUI` e `import SwiftData` em qualquer arquivo de `Domain/` falham
-  o build. Isso é uma linha de import real, detectada exatamente pela regra
-  `domain_no_swiftui` / `domain_no_swiftdata` do SwiftLint.
+**Convenção verificada por nome.** `presentation_no_data_types` procura os
+identificadores da camada `Data` (`VehicleModel`, `ModelContext`,
+`SwiftData*Repository`, …) dentro de `Presentation/`. É por isso que os `@Model`
+têm sufixo `Model`: sem a convenção de nome, a regra não teria o que procurar.
+**A lista é manual** — um `@Model` novo precisa ser acrescentado à regra, senão
+passa batido. E a regra não distingue uso de menção acidental: ela ignora
+comentários e strings via `excluded_match_kinds`, mas qualquer identificador
+novo que coincida com um nome da lista dispararia igual.
 
-O que é apenas convenção verificada por nome:
+A garantia real dessa metade exigiria `Domain`, `Data` e `Presentation` como
+módulos separados, com o compilador recusando o import. Foi descartado nesta
+etapa por custo de build e de manutenção de targets. Se a fronteira for violada
+na prática mais de uma vez, é a hora de reconsiderar.
 
-- A regra `presentation_no_data_types` procura os identificadores da camada
-  `Data` (`VehicleModel`, `ModelContext`, `SwiftData*Repository`, …) dentro de
-  `Presentation/`. É por isso que os `@Model` têm sufixo `Model`: sem a
-  convenção de nome, a regra não teria o que procurar. **A lista é manual** —
-  um `@Model` novo precisa ser acrescentado à regra, senão passa batido.
+**Custos assumidos para o lint rodar:**
 
-A garantia real exigiria `Domain`, `Data` e `Presentation` como módulos
-separados, com o compilador recusando o import. Isso foi descartado nesta etapa
-por custo de build e de manutenção de targets. Se a fronteira for violada na
-prática mais de uma vez, essa é a hora de reconsiderar.
-
-Uma dependência adicional: se o SwiftLint não estiver instalado na máquina, a
-fase de build emite um aviso e passa. O CI precisa instalá-lo para que as regras
-sejam efetivamente aplicadas.
+- `ENABLE_USER_SCRIPT_SANDBOXING = NO` no target do app. O sandbox de script do
+  Xcode impede a fase de build de ler o `.swiftlint.yml` e os fontes. Vale só
+  para este target, mas é uma proteção a menos.
+- Na máquina local, a fase de build **avisa e passa** quando o SwiftLint não
+  está instalado, para não quebrar o clone de quem ainda não o tem. Isso
+  significa que a fronteira não é garantida localmente. Quem garante é o CI,
+  onde a ausência do SwiftLint falha o job e o lint roda em `--strict`.
 
 ## O custo de abrir mão de `@Query`
 

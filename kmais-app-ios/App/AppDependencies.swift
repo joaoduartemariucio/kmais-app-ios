@@ -1,10 +1,8 @@
 import Foundation
+import OSLog
 import SwiftData
+import SwiftUI
 
-/// O único lugar do app que conhece as implementações concretas.
-///
-/// `Presentation` recebe tudo pelo tipo do protocolo; se algum ViewModel
-/// precisar saber que existe SwiftData por trás, a composição vazou.
 @MainActor
 struct AppDependencies {
     let modelContainer: ModelContainer
@@ -14,8 +12,11 @@ struct AppDependencies {
     let dateProvider: DateProvider
     let reminderScheduler: ReminderScheduler
 
-    init(modelContainer: ModelContainer) {
+    let isUsingFallbackStore: Bool
+
+    init(modelContainer: ModelContainer, isUsingFallbackStore: Bool = false) {
         self.modelContainer = modelContainer
+        self.isUsingFallbackStore = isUsingFallbackStore
         vehicleRepository = SwiftDataVehicleRepository(modelContainer: modelContainer)
         fuelEntryRepository = SwiftDataFuelEntryRepository(modelContainer: modelContainer)
         serviceRepository = SwiftDataServiceRepository(modelContainer: modelContainer)
@@ -27,7 +28,27 @@ struct AppDependencies {
         do {
             return AppDependencies(modelContainer: try KmaisSchema.container())
         } catch {
-            fatalError("Não foi possível criar o ModelContainer: \(error)")
+            let logger = Logger(
+                subsystem: Bundle.main.bundleIdentifier ?? "br.com.joaoduartemariucio.kmais-app-ios",
+                category: "startup"
+            )
+            logger.error("On-disk store unavailable, falling back to memory: \(error, privacy: .public)")
+            return .inMemory(isUsingFallbackStore: true)
         }
     }
+
+    static func inMemory(isUsingFallbackStore: Bool = false) -> AppDependencies {
+        do {
+            return AppDependencies(
+                modelContainer: try KmaisSchema.container(inMemory: true),
+                isUsingFallbackStore: isUsingFallbackStore
+            )
+        } catch {
+            fatalError("Invalid schema: even the in-memory container failed. \(error)")
+        }
+    }
+}
+
+extension EnvironmentValues {
+    @Entry var dependencies: AppDependencies = .inMemory()
 }

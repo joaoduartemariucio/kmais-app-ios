@@ -9,8 +9,6 @@ final class FuelEntryModel {
     var liters: Double = 0
     var pricePerLiter: Decimal = Decimal.zero
     var isFullTank: Bool = true
-    /// Opcional por exigência do formato CloudKit: um abastecimento órfão é
-    /// representável no schema, então toda consulta filtra por veículo.
     var vehicle: VehicleModel?
 
     init(

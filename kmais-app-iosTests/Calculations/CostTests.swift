@@ -2,10 +2,9 @@ import Foundation
 import Testing
 @testable import kmais_app_ios
 
-@Suite("Custo por km")
+@Suite("Cost per kilometer")
 struct CostTests {
-
-    @Test("sem registros: tudo zerado e sem custo por km")
+    @Test("no records: everything zeroed and no cost per kilometer")
     func empty() {
         let summary = Cost.summary(fuel: [], services: [])
 
@@ -14,7 +13,7 @@ struct CostTests {
         #expect(summary.costPerKilometer == nil)
     }
 
-    @Test("um único registro tem gasto conhecido mas não tem custo por km")
+    @Test("a single record has a known spend but no cost per kilometer")
     func singleRecord() {
         let summary = Cost.summary(fuel: [full(0, 1_000, 40, price: 5)], services: [])
 
@@ -23,7 +22,7 @@ struct CostTests {
         #expect(summary.costPerKilometer == nil)
     }
 
-    @Test("registros todos no mesmo odômetro não definem distância")
+    @Test("records all at the same odometer define no distance")
     func zeroDistance() {
         let summary = Cost.summary(
             fuel: [full(0, 1_000, 40), full(10, 1_000, 40)],
@@ -34,7 +33,7 @@ struct CostTests {
         #expect(summary.costPerKilometer == nil)
     }
 
-    @Test("combustível e serviços somam no custo por km")
+    @Test("fuel and services add up in the cost per kilometer")
     func fuelAndServices() {
         let summary = Cost.summary(
             fuel: [
@@ -51,7 +50,7 @@ struct CostTests {
         #expect(summary.costPerKilometer == Decimal(string: "1.30")!)
     }
 
-    @Test("um serviço pode ser o extremo do intervalo de odômetro")
+    @Test("a service can be the far end of the odometer span")
     func serviceExtendsSpan() {
         let summary = Cost.summary(
             fuel: [full(0, 1_000, 40), full(10, 1_400, 40)],
@@ -61,7 +60,7 @@ struct CostTests {
         #expect(summary.distance == 600)
     }
 
-    @Test("soma de centavos não acumula erro de ponto flutuante")
+    @Test("summing cents does not accumulate floating-point error")
     func decimalIsExact() {
         let dime = Decimal(string: "0.10")!
         let fuel = (0..<10).map { full($0, Double(1_000 + $0 * 100), 1, price: dime) }
@@ -70,12 +69,10 @@ struct CostTests {
         let viaDouble = (0..<10).reduce(0.0) { total, _ in total + 0.1 }
 
         #expect(summary.fuelCost == 1)
-        // A mesma soma em Double dá 0.9999999999999999 — é essa diferença que
-        // justifica Decimal para dinheiro.
         #expect(viaDouble != 1)
     }
 
-    @Test("período é o que vem nos arrays: filtrar por data muda o resultado")
+    @Test("the period is whatever the arrays carry: filtering by date changes the result")
     func periodComesFromInput() {
         let everything = [full(0, 1_000, 40), full(10, 1_400, 40), full(20, 1_800, 40)]
         let recent = everything.filter { $0.date >= day(10) }

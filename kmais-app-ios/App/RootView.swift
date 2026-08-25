@@ -1,20 +1,25 @@
 import SwiftUI
 
-/// Placeholder até as telas existirem.
-///
-/// Não usa `@Query`: com repositório no meio, quem lê são os ViewModels. A raiz
-/// só carrega as dependências para baixo.
 struct RootView: View {
-    let dependencies: AppDependencies
+    @Environment(\.dependencies) private var dependencies
 
     var body: some View {
         NavigationStack {
             ContentUnavailableView(
                 "No vehicles yet",
                 systemImage: "car",
-                description: Text("Screens land in the next step.")
+                description: Text(
+                    dependencies.isUsingFallbackStore
+                        ? "Running on a temporary store — changes will not be saved."
+                        : "Screens land in the next step."
+                )
             )
             .navigationTitle("Kmais")
         }
     }
+}
+
+#Preview {
+    RootView()
+        .environment(\.dependencies, .inMemory())
 }

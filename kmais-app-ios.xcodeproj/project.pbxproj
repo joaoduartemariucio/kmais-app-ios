@@ -240,7 +240,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if command -v swiftlint >/dev/null 2>&1; then\n  swiftlint lint --quiet --config \"${SRCROOT}/.swiftlint.yml\"\nelse\n  echo \"warning: SwiftLint não instalado — as regras de fronteira entre camadas não foram verificadas.\"\nfi\n";
+			shellScript = "export PATH=\"$PATH:/opt/homebrew/bin:/usr/local/bin\"\nif command -v swiftlint >/dev/null 2>&1; then\n  swiftlint lint --quiet --config \"${SRCROOT}/.swiftlint.yml\"\nelse\n  echo \"warning: SwiftLint is not installed - layer boundary rules were not checked.\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -317,6 +317,7 @@
 				DEVELOPMENT_TEAM = V9W37J98SZ;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "kmais-app-ios/Info.plist";
@@ -363,6 +364,7 @@
 				DEVELOPMENT_TEAM = V9W37J98SZ;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "kmais-app-ios/Info.plist";

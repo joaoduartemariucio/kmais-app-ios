@@ -2,9 +2,8 @@ import Foundation
 import Testing
 @testable import kmais_app_ios
 
-@Suite("Odômetro")
+@Suite("Odometer")
 struct OdometerTests {
-
     struct Scenario: Sendable, CustomTestStringConvertible {
         let name: String
         let samples: [OdometerSample]
@@ -14,31 +13,31 @@ struct OdometerTests {
     }
 
     static let scenarios: [Scenario] = [
-        Scenario(name: "histórico vazio", samples: [], expected: nil),
-        Scenario(name: "uma amostra", samples: [sample(0, 10_000)], expected: 10_000),
+        Scenario(name: "empty history", samples: [], expected: nil),
+        Scenario(name: "a single sample", samples: [sample(0, 10_000)], expected: 10_000),
         Scenario(
-            name: "a leitura mais recente vence",
+            name: "the most recent reading wins",
             samples: [sample(0, 10_000), sample(30, 12_000), sample(10, 11_000)],
             expected: 12_000
         ),
         Scenario(
-            name: "odômetro que retrocede devolve o mais recente, não o maior",
+            name: "a backwards odometer returns the most recent, not the highest",
             samples: [sample(0, 10_000), sample(10, 15_000), sample(20, 12_000)],
             expected: 12_000
         ),
         Scenario(
-            name: "empate de data resolve pelo maior odômetro",
+            name: "a date tie resolves by the higher odometer",
             samples: [sample(0, 10_000), sample(10, 11_000), sample(10, 11_500)],
             expected: 11_500
         )
     ]
 
-    @Test("current(_:) por cenário", arguments: scenarios)
+    @Test("current(_:) per scenario", arguments: scenarios)
     func scenario(_ scenario: Scenario) {
         #expect(Odometer.current(scenario.samples) == scenario.expected)
     }
 
-    @Test("samples(vehicle:fuel:services:) inclui o cadastro do veículo")
+    @Test("samples(vehicle:fuel:services:) includes the vehicle registration")
     func samplesIncludeRegistration() {
         let vehicle = Vehicle(
             id: testVehicleID,
@@ -55,7 +54,6 @@ struct OdometerTests {
 
         #expect(samples.count == 3)
         #expect(Odometer.current(samples) == 52_000)
-        // Sem nenhum registro, o odômetro do veículo ainda é conhecido.
         #expect(Odometer.current(Odometer.samples(vehicle: vehicle, fuel: [], services: [])) == 50_000)
     }
 }

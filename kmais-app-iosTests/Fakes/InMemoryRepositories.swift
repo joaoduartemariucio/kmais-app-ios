@@ -1,16 +1,8 @@
 import Foundation
 @testable import kmais_app_ios
 
-// Implementações em memória dos protocolos de repositório, para que ViewModels
-// sejam testáveis sem SwiftData, sem ModelContainer e sem I/O.
-//
-// São atores pelo mesmo motivo que os repositórios reais: o protocolo é
-// `Sendable` e as operações são `async`.
-
 actor InMemoryVehicleRepository: VehicleRepository {
     private var storage: [UUID: Vehicle]
-    /// Quando não-nulo, toda operação falha com este erro. Serve para exercitar
-    /// os caminhos de erro dos ViewModels.
     var failure: Error?
 
     init(vehicles: [Vehicle] = [], failure: Error? = nil) {
@@ -108,8 +100,6 @@ actor InMemoryServiceRepository: ServiceRepository {
         entryStorage[entry.id] = entry
     }
 
-    /// Reconcilia por `id`, como a implementação real: o que sumiu do conjunto
-    /// é removido, o resto é inserido ou atualizado no lugar.
     func save(_ rules: [ServiceRule], vehicleID: UUID) async throws {
         if let failure { throw failure }
 
@@ -137,8 +127,6 @@ actor InMemoryServiceRepository: ServiceRepository {
     }
 }
 
-/// Relógio parado, para que qualquer comportamento dependente de tempo seja
-/// determinístico.
 struct FixedDateProvider: DateProvider {
     let now: Date
     var calendar: Calendar = {

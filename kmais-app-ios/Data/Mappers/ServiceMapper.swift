@@ -1,8 +1,11 @@
 import Foundation
 
-enum ServiceMapper {
+nonisolated enum ServiceMapper {
     static func entity(_ model: ServiceEntryModel) -> ServiceEntry? {
-        guard let vehicleID = model.vehicle?.id else { return nil }
+        guard let vehicleID = model.vehicle?.id else {
+            DataLog.orphanDiscarded(type: "ServiceEntryModel", id: model.id)
+            return nil
+        }
         return ServiceEntry(
             id: model.id,
             vehicleID: vehicleID,
@@ -23,7 +26,10 @@ enum ServiceMapper {
     }
 
     static func entity(_ model: ServiceRuleModel) -> ServiceRule? {
-        guard let vehicleID = model.vehicle?.id else { return nil }
+        guard let vehicleID = model.vehicle?.id else {
+            DataLog.orphanDiscarded(type: "ServiceRuleModel", id: model.id)
+            return nil
+        }
         return ServiceRule(
             id: model.id,
             vehicleID: vehicleID,

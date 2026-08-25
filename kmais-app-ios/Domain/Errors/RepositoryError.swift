@@ -1,11 +1,8 @@
 import Foundation
 
-/// Falhas que a camada de dados pode devolver ao domínio.
 enum RepositoryError: Error {
     case vehicleNotFound(UUID)
     case entryNotFound(UUID)
-    /// Falha do store por baixo. Guarda o erro original em vez de achatar em
-    /// string, para que o diagnóstico não se perca.
     case persistenceFailed(underlying: Error)
 }
 

@@ -1,9 +1,5 @@
 import Foundation
 
-/// Por que um formulário ainda não pode ser salvo.
-///
-/// Um enum e não uma `String` para que a razão seja testável e a mensagem
-/// localizável num lugar só.
 enum ValidationIssue: Hashable, Identifiable {
     case nameRequired
     case odometerRequired

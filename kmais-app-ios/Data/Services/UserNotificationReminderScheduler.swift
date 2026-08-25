@@ -1,11 +1,6 @@
 import Foundation
 import UserNotifications
 
-/// `ReminderScheduler` sobre `UserNotifications`.
-///
-/// Nenhuma tela agenda nada ainda: isto existe para que a camada de domínio já
-/// tenha uma implementação real por trás do protocolo quando os lembretes
-/// entrarem.
 struct UserNotificationReminderScheduler: ReminderScheduler {
     private var center: UNUserNotificationCenter { .current() }
 

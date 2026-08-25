@@ -2,15 +2,11 @@ import Foundation
 import Testing
 @testable import kmais_app_ios
 
-@Suite("Previsão de revisão")
+@Suite("Service forecast")
 struct MaintenanceTests {
-
-    // Ritmo de referência dos cenários: 5.000 km em 100 dias = 50 km/dia.
     static let history = [sample(0, 10_000), sample(100, 15_000)]
     static let lastServiceOdometer = 10_000.0
     static let kilometersPerMonth = 50 * 365.25 / 12
-
-    // MARK: Média de uso
 
     struct AverageScenario: Sendable, CustomTestStringConvertible {
         let name: String
@@ -21,27 +17,27 @@ struct MaintenanceTests {
     }
 
     static let averageScenarios: [AverageScenario] = [
-        AverageScenario(name: "histórico vazio", samples: [], expected: nil),
-        AverageScenario(name: "uma amostra só", samples: [sample(0, 10_000)], expected: nil),
+        AverageScenario(name: "empty history", samples: [], expected: nil),
+        AverageScenario(name: "a single sample", samples: [sample(0, 10_000)], expected: nil),
         AverageScenario(
-            name: "duas amostras no mesmo instante",
+            name: "two samples at the same instant",
             samples: [sample(0, 10_000), sample(0, 10_500)],
             expected: nil
         ),
         AverageScenario(
-            name: "veículo parado",
+            name: "a vehicle that has not moved",
             samples: [sample(0, 10_000), sample(100, 10_000)],
             expected: nil
         ),
-        AverageScenario(name: "50 km por dia", samples: history, expected: kilometersPerMonth),
+        AverageScenario(name: "50 km per day", samples: history, expected: kilometersPerMonth),
         AverageScenario(
-            name: "amostras fora de ordem são ordenadas antes",
+            name: "out-of-order samples are sorted first",
             samples: [sample(100, 15_000), sample(0, 10_000)],
             expected: kilometersPerMonth
         )
     ]
 
-    @Test("averageKilometersPerMonth(_:) por cenário", arguments: averageScenarios)
+    @Test("averageKilometersPerMonth(_:) per scenario", arguments: averageScenarios)
     func average(_ scenario: AverageScenario) {
         let average = Maintenance.averageKilometersPerMonth(scenario.samples)
 
@@ -51,11 +47,9 @@ struct MaintenanceTests {
         case (nil, nil):
             break
         default:
-            Issue.record("média \(String(describing: average)) != \(String(describing: scenario.expected))")
+            Issue.record("average \(String(describing: average)) != \(String(describing: scenario.expected))")
         }
     }
-
-    // MARK: Previsão
 
     private func makeForecast(
         kilometers: Double?,
@@ -71,13 +65,13 @@ struct MaintenanceTests {
         )
     }
 
-    @Test("regra sem nenhum intervalo não prevê nada")
+    @Test("a rule with no interval forecasts nothing")
     func emptyRule() {
         #expect(makeForecast(kilometers: nil, months: nil) == nil)
         #expect(makeForecast(kilometers: 0, months: 0) == nil)
     }
 
-    @Test("regra só por km sem histórico utilizável não prevê data")
+    @Test("a distance-only rule without usable history forecasts no date")
     func kilometersWithoutHistory() {
         #expect(makeForecast(kilometers: 10_000, months: nil, history: []) == nil)
         #expect(makeForecast(kilometers: 10_000, months: nil, history: [sample(0, 10_000)]) == nil)
@@ -90,9 +84,8 @@ struct MaintenanceTests {
         )
     }
 
-    @Test("vence por km antes do calendário")
+    @Test("distance comes due before the calendar")
     func distanceWinsFirst() throws {
-        // Vence em 20.000 km; faltam 5.000 a 50 km/dia = 100 dias após o dia 100.
         let forecast = try #require(makeForecast(kilometers: 10_000, months: 12))
 
         #expect(forecast.trigger == .distance)
@@ -101,18 +94,16 @@ struct MaintenanceTests {
         #expect(abs(try #require(forecast.averageKilometersPerMonth) - Self.kilometersPerMonth) < 1e-9)
     }
 
-    @Test("vence por meses antes da quilometragem")
+    @Test("months come due before the distance")
     func calendarWinsFirst() throws {
-        // 6 meses a partir de 2001-01-01 = 2001-07-01, o dia 181.
         let forecast = try #require(makeForecast(kilometers: 30_000, months: 6))
 
         #expect(forecast.trigger == .calendar)
         #expect(forecast.dueDate == day(181))
-        // O odômetro-alvo continua exposto mesmo quando não é ele que vence.
         #expect(forecast.dueOdometer == 40_000)
     }
 
-    @Test("regra só por tempo não tem odômetro de vencimento")
+    @Test("a time-only rule has no due odometer")
     func calendarOnly() throws {
         let forecast = try #require(makeForecast(kilometers: nil, months: 6))
 
@@ -121,7 +112,7 @@ struct MaintenanceTests {
         #expect(forecast.dueOdometer == nil)
     }
 
-    @Test("regra só por km projeta a data pelo ritmo de uso")
+    @Test("a distance-only rule projects the date from the usage pace")
     func distanceOnly() throws {
         let forecast = try #require(makeForecast(kilometers: 10_000, months: nil))
 
@@ -129,19 +120,16 @@ struct MaintenanceTests {
         #expect(forecast.dueDate == day(200))
     }
 
-    @Test("empate entre km e calendário resolve para km")
+    @Test("a tie between distance and calendar resolves to distance")
     func tieBreaksToDistance() throws {
-        // 18.250 km a partir de 10.000 = alvo 28.250; faltam 13.250 a 50 km/dia
-        // = 265 dias após o dia 100, ou seja o dia 365 — o mesmo de 12 meses.
         let forecast = try #require(makeForecast(kilometers: 18_250, months: 12))
 
         #expect(forecast.dueDate == day(365))
         #expect(forecast.trigger == .distance)
     }
 
-    @Test("revisão já vencida devolve data no passado")
+    @Test("an already overdue service returns a date in the past")
     func alreadyOverdue() throws {
-        // Alvo 11.000 km já foi passado; o odômetro atual é 15.000 no dia 100.
         let forecast = try #require(makeForecast(kilometers: 1_000, months: 12))
 
         #expect(forecast.trigger == .distance)
@@ -149,7 +137,7 @@ struct MaintenanceTests {
         #expect(forecast.dueDate < day(100))
     }
 
-    @Test("veículo parado cai para a regra de tempo")
+    @Test("a vehicle that has not moved falls back to the time rule")
     func stationaryFallsBackToCalendar() throws {
         let forecast = try #require(
             makeForecast(

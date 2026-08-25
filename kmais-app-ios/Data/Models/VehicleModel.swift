@@ -1,12 +1,6 @@
 import Foundation
 import SwiftData
 
-/// Persistência do veículo. Não sai da camada `Data` — quem cruza a fronteira
-/// é a entidade `Vehicle`.
-///
-/// Formato mantido compatível com CloudKit mesmo com o sync desligado: sem
-/// `@Attribute(.unique)`, toda propriedade com default, relacionamentos
-/// opcionais com `@Relationship(inverse:)` do lado inverso.
 @Model
 final class VehicleModel {
     var id: UUID = UUID()
@@ -52,8 +46,6 @@ final class VehicleModel {
 }
 
 extension VehicleModel {
-    /// O schema declara os to-many como opcionais; dentro da camada `Data` o
-    /// resto do código não precisa carregar esse `?` adiante.
     var fuels: [FuelEntryModel] { fuelEntries ?? [] }
     var services: [ServiceEntryModel] { serviceEntries ?? [] }
     var rules: [ServiceRuleModel] { serviceRules ?? [] }

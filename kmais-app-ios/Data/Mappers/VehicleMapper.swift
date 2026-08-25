@@ -1,10 +1,6 @@
 import Foundation
 
-/// Conversão entre `VehicleModel` e a entidade `Vehicle`.
-///
-/// A tradução é sempre chamada de dentro do ator do repositório: é ela que
-/// garante que nenhum `@Model` cruze a fronteira do domínio.
-enum VehicleMapper {
+nonisolated enum VehicleMapper {
     static func entity(_ model: VehicleModel) -> Vehicle {
         Vehicle(
             id: model.id,
@@ -18,8 +14,6 @@ enum VehicleMapper {
         )
     }
 
-    /// Aplica a entidade sobre um modelo já existente ou recém-inserido.
-    /// `id` e `createdAt` não são reescritos: são a identidade do registro.
     static func apply(_ entity: Vehicle, to model: VehicleModel) {
         model.name = entity.name
         model.kind = entity.kind

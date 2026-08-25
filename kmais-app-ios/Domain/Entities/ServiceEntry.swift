@@ -1,7 +1,6 @@
 import Foundation
 
-/// Um serviço já executado.
-struct ServiceEntry: Identifiable, Hashable, Sendable, Chronological {
+nonisolated struct ServiceEntry: Identifiable, Hashable, Sendable, Chronological {
     let id: UUID
     let vehicleID: UUID
     var kind: ServiceKind

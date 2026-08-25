@@ -1,11 +1,6 @@
 import Foundation
 
-/// O histórico do veículo: abastecimentos e serviços na mesma linha do tempo,
-/// agrupados por mês, do mais recente para o mais antigo.
-///
-/// É agrupamento de apresentação, não cálculo: nenhuma métrica sai daqui.
 enum VehicleTimeline {
-
     enum Item: Identifiable {
         case fuel(FuelEntry)
         case service(ServiceEntry)
@@ -33,7 +28,6 @@ enum VehicleTimeline {
     }
 
     struct MonthSection: Identifiable {
-        /// Primeiro instante do mês, que serve de identidade e de título.
         let id: Date
         let items: [Item]
 
@@ -55,8 +49,6 @@ enum VehicleTimeline {
             .map { month, items in
                 MonthSection(
                     id: month,
-                    // Empate de data resolve pelo odômetro maior: dentro do
-                    // mesmo dia, quem tem odômetro mais alto veio depois.
                     items: items.sorted {
                         $0.date == $1.date ? $0.odometer > $1.odometer : $0.date > $1.date
                     }

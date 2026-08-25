@@ -3,7 +3,6 @@ import SwiftData
 
 @ModelActor
 actor SwiftDataVehicleRepository: VehicleRepository, SwiftDataRepository {
-
     func all(includingArchived: Bool) async throws -> [Vehicle] {
         var descriptor = FetchDescriptor<VehicleModel>(
             sortBy: [SortDescriptor(\.createdAt, order: .reverse)]

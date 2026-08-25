@@ -1,19 +1,6 @@
 import Foundation
 
-/// Consumo entre tanques cheios.
 enum Consumption {
-
-    /// Todos os trechos calculáveis do histórico, em ordem cronológica.
-    ///
-    /// Um trecho é aberto e fechado apenas por `isFullTank == true`.
-    /// Abastecimentos parciais no meio somam litros ao trecho corrente, mas não
-    /// o abrem nem o fecham. Parciais anteriores ao primeiro tanque cheio são
-    /// ignorados: não há trecho aberto para receber os litros.
-    ///
-    /// Registros com litros não positivos são ignorados por completo — não
-    /// participam do acúmulo e não fecham um trecho. Trechos com distância ou
-    /// litros não positivos não são produzidos. Em ambos os casos o motivo sai
-    /// por `anomalies(in:)`; aqui só sobra o que é calculável.
     static func intervals(from records: [FuelEntry]) -> [ConsumptionInterval] {
         var intervals: [ConsumptionInterval] = []
         var open: FuelEntry?
@@ -46,17 +33,10 @@ enum Consumption {
         return intervals
     }
 
-    /// O trecho fechado mais recente, ou `nil` se ainda não houve dois tanques
-    /// cheios utilizáveis.
     static func latest(from records: [FuelEntry]) -> ConsumptionInterval? {
         intervals(from: records).last
     }
 
-    /// Média ponderada em km/l: soma das distâncias dividida pela soma dos
-    /// litros de todos os trechos.
-    ///
-    /// Ponderada, e não média das médias, para que um trecho longo pese mais
-    /// que um curto.
     static func average(from records: [FuelEntry]) -> Double? {
         let intervals = intervals(from: records)
         guard !intervals.isEmpty else { return nil }
@@ -67,12 +47,6 @@ enum Consumption {
         return intervals.reduce(0) { $0 + $1.distance } / liters
     }
 
-    /// Registros que o cálculo não consegue usar, em ordem cronológica.
-    ///
-    /// As comparações de odômetro são sempre com o registro imediatamente
-    /// anterior, não com o maior odômetro já visto: assim um único valor
-    /// digitado errado marca uma linha, em vez de contaminar todas as
-    /// seguintes.
     static func anomalies(in records: [FuelEntry]) -> [ConsumptionAnomaly] {
         var anomalies: [ConsumptionAnomaly] = []
         var previous: FuelEntry?

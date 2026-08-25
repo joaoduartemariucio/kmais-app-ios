@@ -1,15 +1,8 @@
 import Foundation
 
-/// Formulário de veículo, incluindo as regras de revisão.
-///
-/// As regras são editadas junto com o veículo e salvas como conjunto: é o
-/// repositório que reconcilia por `id`.
 @MainActor
 @Observable
 final class VehicleFormViewModel {
-
-    /// Uma regra em edição. Carrega o `id` da regra existente para que o
-    /// repositório distinga atualização de inserção.
     struct RuleDraft: Identifiable, Hashable {
         let id: UUID
         var kind: ServiceKind
@@ -100,8 +93,6 @@ final class VehicleFormViewModel {
 
     var trimmedName: String { name.trimmingCharacters(in: .whitespacesAndNewlines) }
 
-    /// Placa vazia vira `nil`: o domínio já modela "sem placa" como ausência, e
-    /// string vazia seria um segundo jeito de dizer a mesma coisa.
     var parsedPlate: String? {
         let trimmed = plate.trimmingCharacters(in: .whitespacesAndNewlines)
         return trimmed.isEmpty ? nil : trimmed.uppercased()
@@ -124,8 +115,6 @@ final class VehicleFormViewModel {
     }
 
     func removeRules(at offsets: IndexSet) {
-        // Sem `remove(atOffsets:)`: é SwiftUI, e o ViewModel não precisa
-        // importar a camada de view para tirar item de um array.
         for index in offsets.sorted(by: >) where rules.indices.contains(index) {
             rules.remove(at: index)
         }

@@ -2,17 +2,15 @@ import Foundation
 import Testing
 @testable import kmais_app_ios
 
-@Suite("Consumo")
+@Suite("Consumption")
 struct ConsumptionTests {
-
     struct Scenario: Sendable, CustomTestStringConvertible {
         let name: String
         let records: [FuelEntry]
-        /// Distância e litros esperados de cada trecho, em ordem.
-        let intervals: [Trecho]
+        let intervals: [Leg]
         let average: Double?
 
-        struct Trecho: Sendable {
+        struct Leg: Sendable {
             let distance: Double
             let liters: Double
             init(_ distance: Double, _ liters: Double) {
@@ -26,43 +24,43 @@ struct ConsumptionTests {
 
     static let scenarios: [Scenario] = [
         Scenario(
-            name: "histórico vazio",
+            name: "empty history",
             records: [],
             intervals: [],
             average: nil
         ),
         Scenario(
-            name: "um único abastecimento não abre trecho",
+            name: "a single fill-up does not open a leg",
             records: [full(0, 1_000, 40)],
             intervals: [],
             average: nil
         ),
         Scenario(
-            name: "sequência só com tanques parciais",
+            name: "a sequence of partial fills only",
             records: [partial(0, 1_000, 10), partial(5, 1_200, 12), partial(10, 1_400, 11)],
             intervals: [],
             average: nil
         ),
         Scenario(
-            name: "cheio para cheio",
+            name: "full tank to full tank",
             records: [full(0, 1_000, 40), full(10, 1_400, 40)],
             intervals: [.init(400, 40)],
             average: 10
         ),
         Scenario(
-            name: "parcial antes do primeiro cheio é ignorado",
+            name: "a partial fill before the first full tank is ignored",
             records: [partial(0, 900, 10), full(5, 1_000, 40), full(15, 1_400, 40)],
             intervals: [.init(400, 40)],
             average: 10
         ),
         Scenario(
-            name: "um parcial no meio soma litros ao trecho",
+            name: "a partial fill in between adds liters to the leg",
             records: [full(0, 1_000, 40), partial(5, 1_200, 20), full(10, 1_400, 20)],
             intervals: [.init(400, 40)],
             average: 10
         ),
         Scenario(
-            name: "múltiplos parciais no meio do mesmo trecho",
+            name: "multiple partial fills within the same leg",
             records: [
                 full(0, 1_000, 50),
                 partial(2, 1_100, 10),
@@ -74,38 +72,38 @@ struct ConsumptionTests {
             average: 10
         ),
         Scenario(
-            name: "dois trechos consecutivos, média ponderada",
+            name: "two consecutive legs, weighted average",
             records: [full(0, 1_000, 40), full(10, 1_400, 40), full(20, 1_800, 50)],
             intervals: [.init(400, 40), .init(400, 50)],
             average: 800.0 / 90.0
         ),
         Scenario(
-            name: "odômetro que retrocede descarta só o trecho afetado",
+            name: "a backwards odometer discards only the affected leg",
             records: [full(0, 1_000, 40), full(10, 900, 40), full(20, 1_400, 50)],
             intervals: [.init(500, 50)],
             average: 10
         ),
         Scenario(
-            name: "odômetro parado entre dois cheios não vira trecho",
+            name: "an unchanged odometer between two full tanks is not a leg",
             records: [full(0, 1_000, 40), full(10, 1_000, 30)],
             intervals: [],
             average: nil
         ),
         Scenario(
-            name: "registro com litros não positivos é ignorado",
+            name: "a record with non-positive liters is ignored",
             records: [full(0, 1_000, 40), full(10, 1_400, 0)],
             intervals: [],
             average: nil
         ),
         Scenario(
-            name: "array fora de ordem cronológica é ordenado antes do cálculo",
+            name: "an out-of-order array is sorted before calculating",
             records: [full(10, 1_400, 40), full(0, 1_000, 40)],
             intervals: [.init(400, 40)],
             average: 10
         )
     ]
 
-    @Test("intervals(from:) e average(from:) por cenário", arguments: scenarios)
+    @Test("intervals(from:) and average(from:) per scenario", arguments: scenarios)
     func scenario(_ scenario: Scenario) {
         let intervals = Consumption.intervals(from: scenario.records)
 
@@ -123,11 +121,11 @@ struct ConsumptionTests {
         case (nil, nil):
             break
         default:
-            Issue.record("média \(String(describing: average)) != \(String(describing: scenario.average))")
+            Issue.record("average \(String(describing: average)) != \(String(describing: scenario.average))")
         }
     }
 
-    @Test("latest(from:) devolve o trecho mais recente")
+    @Test("latest(from:) returns the most recent leg")
     func latest() {
         let records = [full(0, 1_000, 40), full(10, 1_400, 40), full(20, 1_800, 50)]
         let latest = Consumption.latest(from: records)
@@ -137,12 +135,12 @@ struct ConsumptionTests {
         #expect(latest?.liters == 50)
     }
 
-    @Test("latest(from:) é nil sem trecho fechado")
+    @Test("latest(from:) is nil without a closed leg")
     func latestWithoutInterval() {
         #expect(Consumption.latest(from: [full(0, 1_000, 40)]) == nil)
     }
 
-    @Test("o trecho carrega as datas dos cheios que o delimitam")
+    @Test("the leg carries the dates of the full tanks bounding it")
     func intervalDates() {
         let interval = Consumption.latest(from: [full(3, 1_000, 40), full(13, 1_400, 40)])
 

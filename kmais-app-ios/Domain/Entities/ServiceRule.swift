@@ -1,11 +1,6 @@
 import Foundation
 
-/// Com que frequência um tipo de serviço deve se repetir. Vence o que chegar
-/// primeiro entre quilometragem e tempo.
-///
-/// Os dois intervalos são opcionais: uma regra pode ser só por quilometragem
-/// (rodízio de pneus), só por tempo (fluido de freio) ou ambos.
-struct ServiceRule: Identifiable, Hashable, Sendable {
+nonisolated struct ServiceRule: Identifiable, Hashable, Sendable {
     let id: UUID
     let vehicleID: UUID
     var kind: ServiceKind

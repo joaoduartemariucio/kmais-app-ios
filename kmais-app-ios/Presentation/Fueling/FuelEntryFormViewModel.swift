@@ -1,14 +1,8 @@
 import Foundation
 
-/// Formulário de abastecimento.
-///
-/// Os números ficam como texto: cancelar não pode tocar no banco, e "campo
-/// vazio" precisa ser distinguível de "campo com zero" para a validação dizer
-/// *qual* dos dois é o problema.
 @MainActor
 @Observable
 final class FuelEntryFormViewModel {
-
     enum Mode {
         case create(vehicleID: UUID)
         case edit(FuelEntry)
@@ -24,11 +18,6 @@ final class FuelEntryFormViewModel {
 
     private let mode: Mode
     private let repository: FuelEntryRepository
-    /// Última leitura do veículo desconsiderando o registro em edição — senão
-    /// editar o registro mais recente sempre falharia contra ele mesmo.
-    ///
-    /// Vem de fora porque a tela ainda não existe: quando existir, decidimos se
-    /// o valor vem do detalhe já carregado ou de uma consulta própria.
     private let lastOdometer: Double?
 
     init(
@@ -61,10 +50,6 @@ final class FuelEntryFormViewModel {
     var parsedLiters: Double? { NumberInput.double(liters) }
     var parsedPrice: Decimal? { NumberInput.decimal(pricePerLiter) }
 
-    /// Total do abastecimento, ao vivo enquanto o usuário digita.
-    ///
-    /// Sai de `FuelEntry.totalCost` e não de uma multiplicação aqui: é a mesma
-    /// conta que alimenta o custo por km, e as duas não podem divergir.
     var totalCost: Decimal? {
         guard let parsedLiters, let parsedPrice else { return nil }
         return entry(odometer: parsedOdometer ?? 0, liters: parsedLiters, price: parsedPrice).totalCost

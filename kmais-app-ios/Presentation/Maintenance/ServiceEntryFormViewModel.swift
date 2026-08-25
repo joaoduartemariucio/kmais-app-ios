@@ -1,10 +1,8 @@
 import Foundation
 
-/// Formulário de serviço executado.
 @MainActor
 @Observable
 final class ServiceEntryFormViewModel {
-
     enum Mode {
         case create(vehicleID: UUID)
         case edit(ServiceEntry)
@@ -50,8 +48,6 @@ final class ServiceEntryFormViewModel {
 
     var parsedOdometer: Double? { NumberInput.double(odometer) }
 
-    /// Serviço de graça existe — garantia, cortesia —, então custo vazio vale
-    /// zero em vez de travar o formulário.
     var parsedCost: Decimal { NumberInput.decimal(cost) ?? 0 }
 
     var issues: [ValidationIssue] {
