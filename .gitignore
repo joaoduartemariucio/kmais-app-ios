@@ -85,3 +85,11 @@ playground.xcworkspace
 # Package.resolved
 
 /Packages/*/.build
+
+### Kmais
+# Configuração de IDE por usuário e dados compartilhados do Xcode (schemes,
+# IDEWorkspaceChecks). Ficam fora do repo: cada clone regenera o que precisa.
+xcshareddata/
+
+# Artefatos do SwiftPM local
+/Packages/*/.swiftpm
