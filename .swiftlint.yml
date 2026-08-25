@@ -1,0 +1,34 @@
+# Regras de fronteira entre camadas.
+#
+# Leia junto com docs/adr/0001-arquitetura.md: a primeira regra é garantia real,
+# as outras duas são convenção verificada por nome. Como Domain, Data e
+# Presentation vivem no mesmo módulo, não existe `import` entre elas para o
+# linter observar.
+
+included:
+  - kmais-app-ios
+
+custom_rules:
+  domain_no_swiftui:
+    name: "Domain sem SwiftUI"
+    included: ".*/Domain/.*\\.swift"
+    regex: "import\\s+SwiftUI"
+    excluded_match_kinds: [comment, doccomment, string]
+    message: "Domain importa apenas Foundation. Se o tipo precisa de SwiftUI, ele pertence a Presentation."
+    severity: error
+
+  domain_no_swiftdata:
+    name: "Domain sem SwiftData"
+    included: ".*/Domain/.*\\.swift"
+    regex: "import\\s+SwiftData"
+    excluded_match_kinds: [comment, doccomment, string]
+    message: "Domain importa apenas Foundation. Se o tipo precisa de SwiftData, ele pertence a Data."
+    severity: error
+
+  presentation_no_data_types:
+    name: "Presentation sem tipos de Data"
+    included: ".*/Presentation/.*\\.swift"
+    regex: "\\b(VehicleModel|FuelEntryModel|ServiceEntryModel|ServiceRuleModel|KmaisSchema|ModelContext|ModelContainer|SwiftData[A-Za-z]+Repository)\\b"
+    excluded_match_kinds: [comment, doccomment, string]
+    message: "Presentation conversa só com os protocolos de Domain. Este tipo é da camada Data."
+    severity: error

@@ -1,0 +1,319 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    "%@ km/L": {
+      "comment": "Fuel efficiency, e.g. 12.4 km/L",
+      "extractionState": "manual",
+      "localizations": {
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ km/L"
+          }
+        }
+      }
+    },
+    "A reminder needs a distance or a time interval.": {
+      "extractionState": "manual",
+      "localizations": {
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Um lembrete precisa de intervalo em km ou em meses."
+          }
+        }
+      }
+    },
+    "Air filter": {
+      "extractionState": "manual",
+      "localizations": {
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filtro de ar"
+          }
+        }
+      }
+    },
+    "Brakes": {
+      "extractionState": "manual",
+      "localizations": {
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Freios"
+          }
+        }
+      }
+    },
+    "Car": {
+      "extractionState": "manual",
+      "localizations": {
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Carro"
+          }
+        }
+      }
+    },
+    "Chain": {
+      "extractionState": "manual",
+      "localizations": {
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Corrente"
+          }
+        }
+      }
+    },
+    "Coolant": {
+      "extractionState": "manual",
+      "localizations": {
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fluido de arrefecimento"
+          }
+        }
+      }
+    },
+    "Cost cannot be negative.": {
+      "extractionState": "manual",
+      "localizations": {
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O custo não pode ser negativo."
+          }
+        }
+      }
+    },
+    "Could not save your changes.": {
+      "extractionState": "manual",
+      "localizations": {
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não foi possível salvar as alterações."
+          }
+        }
+      }
+    },
+    "Enter how many liters you filled.": {
+      "extractionState": "manual",
+      "localizations": {
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Informe quantos litros você abasteceu."
+          }
+        }
+      }
+    },
+    "Enter the odometer reading.": {
+      "extractionState": "manual",
+      "localizations": {
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Informe o odômetro."
+          }
+        }
+      }
+    },
+    "Enter the price per liter.": {
+      "extractionState": "manual",
+      "localizations": {
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Informe o preço por litro."
+          }
+        }
+      }
+    },
+    "Fuel filter": {
+      "extractionState": "manual",
+      "localizations": {
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filtro de combustível"
+          }
+        }
+      }
+    },
+    "Give the vehicle a name.": {
+      "extractionState": "manual",
+      "localizations": {
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dê um nome ao veículo."
+          }
+        }
+      }
+    },
+    "Inspection": {
+      "extractionState": "manual",
+      "localizations": {
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Revisão"
+          }
+        }
+      }
+    },
+    "Kmais": {
+      "extractionState": "manual",
+      "shouldTranslate": false
+    },
+    "Liters must be greater than zero.": {
+      "extractionState": "manual",
+      "localizations": {
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Litros precisa ser maior que zero."
+          }
+        }
+      }
+    },
+    "Motorcycle": {
+      "extractionState": "manual",
+      "localizations": {
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Moto"
+          }
+        }
+      }
+    },
+    "No vehicles yet": {
+      "extractionState": "manual",
+      "localizations": {
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nenhum veículo ainda"
+          }
+        }
+      }
+    },
+    "Oil change": {
+      "extractionState": "manual",
+      "localizations": {
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Troca de óleo"
+          }
+        }
+      }
+    },
+    "Oil filter": {
+      "extractionState": "manual",
+      "localizations": {
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filtro de óleo"
+          }
+        }
+      }
+    },
+    "Other": {
+      "extractionState": "manual",
+      "localizations": {
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Outro"
+          }
+        }
+      }
+    },
+    "Price must be greater than zero.": {
+      "extractionState": "manual",
+      "localizations": {
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Preço precisa ser maior que zero."
+          }
+        }
+      }
+    },
+    "Screens land in the next step.": {
+      "extractionState": "manual",
+      "localizations": {
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "As telas entram na próxima etapa."
+          }
+        }
+      }
+    },
+    "Spark plugs": {
+      "extractionState": "manual",
+      "localizations": {
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Velas"
+          }
+        }
+      }
+    },
+    "The odometer must be above the last record (%@).": {
+      "extractionState": "manual",
+      "localizations": {
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O odômetro precisa ser maior que o do último registro (%@)."
+          }
+        }
+      }
+    },
+    "This record no longer exists.": {
+      "extractionState": "manual",
+      "localizations": {
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Este registro não existe mais."
+          }
+        }
+      }
+    },
+    "This vehicle no longer exists.": {
+      "extractionState": "manual",
+      "localizations": {
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Este veículo não existe mais."
+          }
+        }
+      }
+    },
+    "Tires": {
+      "extractionState": "manual",
+      "localizations": {
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pneus"
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}
