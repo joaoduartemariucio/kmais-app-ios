@@ -76,3 +76,45 @@ nonisolated enum Maintenance {
         )
     }
 }
+
+nonisolated extension Maintenance {
+    static func due(
+        rule: ServiceRule,
+        vehicle: Vehicle,
+        services: [ServiceEntry],
+        history: [OdometerSample],
+        calendar: Calendar = .current
+    ) -> ServiceDue? {
+        let last = services
+            .filter { $0.kind == rule.kind }
+            .max { $0.date < $1.date }
+
+        guard let forecast = forecast(
+            rule: rule,
+            lastServiceDate: last?.date ?? vehicle.createdAt,
+            lastServiceOdometer: last?.odometer ?? vehicle.initialOdometer,
+            history: history,
+            calendar: calendar
+        ) else { return nil }
+
+        return ServiceDue(rule: rule, forecast: forecast)
+    }
+
+    static func nextDue(
+        rules: [ServiceRule],
+        vehicle: Vehicle,
+        services: [ServiceEntry],
+        history: [OdometerSample],
+        calendar: Calendar = .current
+    ) -> ServiceDue? {
+        rules
+            .compactMap {
+                due(rule: $0, vehicle: vehicle, services: services, history: history, calendar: calendar)
+            }
+            .min {
+                $0.forecast.dueDate == $1.forecast.dueDate
+                    ? $0.rule.kind.rawValue < $1.rule.kind.rawValue
+                    : $0.forecast.dueDate < $1.forecast.dueDate
+            }
+    }
+}

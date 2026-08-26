@@ -153,3 +153,175 @@ struct MaintenanceTests {
         #expect(forecast.averageKilometersPerMonth == nil)
     }
 }
+
+@Suite("Next service due")
+struct NextServiceDueTests {
+
+    private static let vehicle = Vehicle(
+        name: "Gol",
+        initialOdometer: 10_000,
+        createdAt: day(0)
+    )
+
+    private static let history = [sample(0, 10_000), sample(100, 15_000)]
+
+    private static func rule(_ kind: ServiceKind, kilometers: Double?, months: Int?) -> ServiceRule {
+        ServiceRule(
+            vehicleID: vehicle.id,
+            kind: kind,
+            kilometerInterval: kilometers,
+            monthInterval: months
+        )
+    }
+
+    @Test("without rules there is nothing due")
+    func noRules() {
+        #expect(
+            Maintenance.nextDue(
+                rules: [],
+                vehicle: Self.vehicle,
+                services: [],
+                history: Self.history,
+                calendar: utc
+            ) == nil
+        )
+    }
+
+    @Test("with no service of that kind the baseline is the vehicle registration")
+    func fallsBackToRegistration() throws {
+        let due = try #require(
+            Maintenance.due(
+                rule: Self.rule(.oilChange, kilometers: 10_000, months: nil),
+                vehicle: Self.vehicle,
+                services: [],
+                history: Self.history,
+                calendar: utc
+            )
+        )
+
+        #expect(due.forecast.dueOdometer == 20_000)
+        #expect(due.forecast.dueDate == day(200))
+    }
+
+    @Test("the last service of the kind wins over the registration")
+    func usesLastService() throws {
+        let service = ServiceEntry(
+            vehicleID: Self.vehicle.id,
+            kind: .oilChange,
+            date: day(50),
+            odometer: 12_500,
+            cost: 300
+        )
+
+        let due = try #require(
+            Maintenance.due(
+                rule: Self.rule(.oilChange, kilometers: 10_000, months: nil),
+                vehicle: Self.vehicle,
+                services: [service],
+                history: Self.history,
+                calendar: utc
+            )
+        )
+
+        #expect(due.forecast.dueOdometer == 22_500)
+    }
+
+    @Test("a service of another kind does not move the baseline")
+    func ignoresOtherKinds() throws {
+        let service = ServiceEntry(
+            vehicleID: Self.vehicle.id,
+            kind: .tires,
+            date: day(50),
+            odometer: 12_500,
+            cost: 300
+        )
+
+        let due = try #require(
+            Maintenance.due(
+                rule: Self.rule(.oilChange, kilometers: 10_000, months: nil),
+                vehicle: Self.vehicle,
+                services: [service],
+                history: Self.history,
+                calendar: utc
+            )
+        )
+
+        #expect(due.forecast.dueOdometer == 20_000)
+    }
+
+    @Test("the earliest due date wins among several rules")
+    func earliestWins() throws {
+        let due = try #require(
+            Maintenance.nextDue(
+                rules: [
+                    Self.rule(.oilChange, kilometers: 10_000, months: nil),
+                    Self.rule(.brakes, kilometers: nil, months: 6),
+                    Self.rule(.tires, kilometers: 40_000, months: nil)
+                ],
+                vehicle: Self.vehicle,
+                services: [],
+                history: Self.history,
+                calendar: utc
+            )
+        )
+
+        #expect(due.rule.kind == .brakes)
+        #expect(due.forecast.dueDate == day(181))
+    }
+
+    @Test("a rule with no possible forecast is skipped instead of blocking the others")
+    func skipsUnforecastableRule() throws {
+        let due = try #require(
+            Maintenance.nextDue(
+                rules: [
+                    Self.rule(.tires, kilometers: nil, months: nil),
+                    Self.rule(.oilChange, kilometers: 10_000, months: nil)
+                ],
+                vehicle: Self.vehicle,
+                services: [],
+                history: Self.history,
+                calendar: utc
+            )
+        )
+
+        #expect(due.rule.kind == .oilChange)
+    }
+
+    @Test("an overdue rule beats a future one")
+    func overdueWins() throws {
+        let due = try #require(
+            Maintenance.nextDue(
+                rules: [
+                    Self.rule(.oilChange, kilometers: 10_000, months: nil),
+                    Self.rule(.chain, kilometers: 1_000, months: nil)
+                ],
+                vehicle: Self.vehicle,
+                services: [],
+                history: Self.history,
+                calendar: utc
+            )
+        )
+
+        #expect(due.rule.kind == .chain)
+        #expect(due.forecast.dueDate < day(100))
+    }
+
+    @Test("a tie on the due date resolves deterministically by kind")
+    func tieResolvesByKind() throws {
+        let due = try #require(
+            Maintenance.nextDue(
+                rules: [
+                    Self.rule(.tires, kilometers: 10_000, months: nil),
+                    Self.rule(.brakes, kilometers: 10_000, months: nil)
+                ],
+                vehicle: Self.vehicle,
+                services: [],
+                history: Self.history,
+                calendar: utc
+            )
+        )
+
+        #expect(due.rule.kind == .brakes)
+    }
+}
+

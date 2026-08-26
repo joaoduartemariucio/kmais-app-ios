@@ -1,25 +1,24 @@
 import SwiftUI
 
 struct RootView: View {
-    @Environment(\.dependencies) private var dependencies
+    @State private var path: [AppRoute] = []
 
     var body: some View {
-        NavigationStack {
-            ContentUnavailableView(
-                "No vehicles yet",
-                systemImage: "car",
-                description: Text(
-                    dependencies.isUsingFallbackStore
-                        ? "Running on a temporary store — changes will not be saved."
-                        : "Screens land in the next step."
-                )
-            )
-            .navigationTitle("Kmais")
+        NavigationStack(path: $path) {
+            VehicleListView(scope: .active)
+                .navigationDestination(for: AppRoute.self) { route in
+                    switch route {
+                    case .vehicleDetail(let vehicle):
+                        VehicleDetailView(vehicle: vehicle)
+                    case .archivedVehicles:
+                        VehicleListView(scope: .archived)
+                    }
+                }
         }
     }
 }
 
 #Preview {
     RootView()
-        .environment(\.dependencies, .inMemory())
+        .environment(\.dependencies, .preview)
 }
