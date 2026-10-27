@@ -7,10 +7,10 @@ struct VehicleStats {
 
         var id: UUID { due.rule.id }
 
-        var isEstimatePassed: Bool { status.level != .overdue && status.remainingDays < 0 }
-
         var relativeDue: String {
-            isEstimatePassed ? String(localized: "Estimate passed") : status.remainingDays.formattedRelativeDays
+            if status.isEstimatePassed { return String(localized: "Estimate passed") }
+            if let days = status.remainingDays { return days.formattedRelativeDays }
+            return status.remainingKilometers?.formattedRemainingKilometers ?? ""
         }
     }
 
@@ -66,10 +66,12 @@ struct VehicleStats {
             }
             .sorted { lhs, rhs in
                 if lhs.status.level != rhs.status.level { return lhs.status.level > rhs.status.level }
-                if lhs.due.forecast.dueDate != rhs.due.forecast.dueDate {
-                    return lhs.due.forecast.dueDate < rhs.due.forecast.dueDate
+                switch (lhs.due.forecast.dueDate, rhs.due.forecast.dueDate) {
+                case let (left?, right?) where left != right: return left < right
+                case (.some, nil): return true
+                case (nil, .some): return false
+                default: return lhs.due.rule.kind.rawValue < rhs.due.rule.kind.rawValue
                 }
-                return lhs.due.rule.kind.rawValue < rhs.due.rule.kind.rawValue
             }
     }
 

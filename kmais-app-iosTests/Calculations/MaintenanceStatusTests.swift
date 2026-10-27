@@ -113,4 +113,39 @@ struct MaintenanceStatusTests {
         #expect(withService?.since == sample(20, 2_000))
         #expect(withoutService?.since == sample(0, 1_000))
     }
+
+    @Test("the status says which limit made it overdue and keeps the calendar date")
+    func overdueReason() {
+        let both = due(kilometers: 10_000, months: 1, dueDate: day(31), trigger: .calendar)
+
+        let byCalendar = status(both, odometer: 12_000, now: 40)
+        #expect(byCalendar.overdueBy == .calendar)
+        #expect(byCalendar.calendarDueDate == day(31))
+
+        #expect(status(both, odometer: 20_000, now: 40).overdueBy == .distance)
+        #expect(status(both, odometer: 12_000, now: 10).overdueBy == nil)
+    }
+
+    @Test("without a forecast date the status comes from km alone")
+    func datelessStatus() {
+        let chain = ServiceDue(
+            rule: rule(kilometers: 1_000, months: nil),
+            forecast: MaintenanceForecast(
+                dueDate: nil,
+                trigger: .distance,
+                dueOdometer: 11_000,
+                averageKilometersPerMonth: nil
+            ),
+            since: sample(0, 10_000)
+        )
+
+        let early = status(chain, odometer: 10_200, now: 5)
+        #expect(early.level == .onTrack)
+        #expect(early.remainingDays == nil)
+        #expect(early.progress == 0.2)
+        #expect(!early.isEstimatePassed)
+
+        #expect(status(chain, odometer: 10_800, now: 5).level == .dueSoon)
+        #expect(status(chain, odometer: 11_000, now: 5).overdueBy == .distance)
+    }
 }

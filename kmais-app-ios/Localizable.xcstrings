@@ -554,6 +554,17 @@
         }
       }
     },
+    "Due at %@." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prevista para %@."
+          }
+        }
+      }
+    },
     "Due on %@." : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1022,6 +1033,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Registre um abastecimento ou serviço para vê-lo aqui."
+          }
+        }
+      }
+    },
+    "Log another reading to estimate a date." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Registre outra leitura para estimar uma data."
           }
         }
       }
@@ -1693,6 +1715,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Os veículos que você arquivar aparecem aqui."
+          }
+        }
+      }
+    },
+    "Was due at %@ (last reading %@)." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estava prevista para %@ (última leitura: %@)."
           }
         }
       }

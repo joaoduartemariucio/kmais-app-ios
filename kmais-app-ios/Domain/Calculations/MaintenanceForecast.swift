@@ -6,7 +6,7 @@ nonisolated struct MaintenanceForecast: Hashable, Sendable {
         case calendar
     }
 
-    let dueDate: Date
+    let dueDate: Date?
     let trigger: Trigger
     let dueOdometer: Double?
     let averageKilometersPerMonth: Double?

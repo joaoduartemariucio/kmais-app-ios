@@ -52,7 +52,7 @@ nonisolated enum Maintenance {
             dateByCalendar = calendar.date(byAdding: .month, value: months, to: lastServiceDate)
         }
 
-        let dueDate: Date
+        let dueDate: Date?
         let trigger: MaintenanceForecast.Trigger
         switch (dateByDistance, dateByCalendar) {
         case let (byDistance?, byCalendar?):
@@ -65,7 +65,9 @@ nonisolated enum Maintenance {
             dueDate = byCalendar
             trigger = .calendar
         case (nil, nil):
-            return nil
+            guard dueOdometer != nil else { return nil }
+            dueDate = nil
+            trigger = .distance
         }
 
         return MaintenanceForecast(
@@ -116,10 +118,13 @@ nonisolated extension Maintenance {
             .compactMap {
                 due(rule: $0, vehicle: vehicle, services: services, history: history, calendar: calendar)
             }
-            .min {
-                $0.forecast.dueDate == $1.forecast.dueDate
-                    ? $0.rule.kind.rawValue < $1.rule.kind.rawValue
-                    : $0.forecast.dueDate < $1.forecast.dueDate
+            .min { lhs, rhs in
+                switch (lhs.forecast.dueDate, rhs.forecast.dueDate) {
+                case let (left?, right?) where left != right: left < right
+                case (.some, nil): true
+                case (nil, .some): false
+                default: lhs.rule.kind.rawValue < rhs.rule.kind.rawValue
+                }
             }
     }
 }
@@ -137,17 +142,24 @@ nonisolated extension Maintenance {
     ) -> MaintenanceStatus {
         let today = calendar.startOfDay(for: now)
         let start = calendar.startOfDay(for: due.since.date)
-        let estimated = calendar.startOfDay(for: due.forecast.dueDate)
 
-        let remainingDays = days(from: today, to: estimated, calendar: calendar)
-        let periodDays = max(1, days(from: start, to: estimated, calendar: calendar))
-        let dateProgress = Double(periodDays - remainingDays) / Double(periodDays)
-        var isDueSoon = Double(remainingDays) <= window(for: Double(periodDays), clampedTo: dueSoonDays)
+        var remainingDays: Int?
+        var dateProgress = 0.0
+        var isDueSoon = false
+        if let dueDate = due.forecast.dueDate {
+            let estimated = calendar.startOfDay(for: dueDate)
+            let remaining = days(from: today, to: estimated, calendar: calendar)
+            let periodDays = max(1, days(from: start, to: estimated, calendar: calendar))
+            remainingDays = remaining
+            dateProgress = Double(periodDays - remaining) / Double(periodDays)
+            isDueSoon = Double(remaining) <= window(for: Double(periodDays), clampedTo: dueSoonDays)
+        }
 
-        var isOverdue = false
-        if let months = due.rule.monthInterval, months > 0,
-           let calendarDueDate = calendar.date(byAdding: .month, value: months, to: start) {
-            isOverdue = calendarDueDate < today
+        var overdueBy: MaintenanceForecast.Trigger?
+        var calendarDueDate: Date?
+        if let months = due.rule.monthInterval, months > 0 {
+            calendarDueDate = calendar.date(byAdding: .month, value: months, to: start)
+            if let calendarDueDate, calendarDueDate < today { overdueBy = .calendar }
         }
 
         var remainingKilometers: Double?
@@ -156,11 +168,11 @@ nonisolated extension Maintenance {
             let remaining = due.since.odometer + interval - currentOdometer
             remainingKilometers = remaining
             distanceProgress = (interval - remaining) / interval
-            isOverdue = isOverdue || remaining <= 0
+            if remaining <= 0 { overdueBy = .distance }
             isDueSoon = isDueSoon || remaining <= window(for: interval, clampedTo: dueSoonKilometers)
         }
 
-        let level: MaintenanceStatus.Level = if isOverdue {
+        let level: MaintenanceStatus.Level = if overdueBy != nil {
             .overdue
         } else if isDueSoon {
             .dueSoon
@@ -172,7 +184,9 @@ nonisolated extension Maintenance {
             level: level,
             progress: min(1, max(0, distanceProgress, dateProgress)),
             remainingKilometers: remainingKilometers,
-            remainingDays: remainingDays
+            remainingDays: remainingDays,
+            overdueBy: overdueBy,
+            calendarDueDate: calendarDueDate
         )
     }
 

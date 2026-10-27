@@ -41,17 +41,21 @@ struct ServiceDueRow: View {
             Label(remaining.formattedRemainingKilometers, systemImage: "road.lanes")
         }
         Spacer(minLength: 4)
-        Label {
-            Text(verbatim: "\(dueDate) · \(item.relativeDue)")
-        } icon: {
-            Image(systemName: "calendar")
+        if let date = forecast.dueDate {
+            Label {
+                Text(verbatim: "\(dueText(date)) · \(item.relativeDue)")
+            } icon: {
+                Image(systemName: "calendar")
+            }
+        } else {
+            Label("Log another reading to estimate a date.", systemImage: "gauge.with.needle")
         }
     }
 
-    private var dueDate: String {
+    private func dueText(_ date: Date) -> String {
         forecast.trigger == .distance
-            ? String(localized: "Around \(forecast.dueDate.formattedDay)")
-            : forecast.dueDate.formattedDay
+            ? String(localized: "Around \(date.formattedDay)")
+            : date.formattedDay
     }
 
     private var interval: String {

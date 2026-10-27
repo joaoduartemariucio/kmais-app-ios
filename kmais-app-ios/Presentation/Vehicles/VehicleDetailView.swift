@@ -41,17 +41,25 @@ struct VehicleDetailView: View {
                     sheet = .editVehicle(viewModel?.rules ?? [])
                 }
             }
-            ToolbarItemGroup(placement: .bottomBar) {
+        }
+        .safeAreaInset(edge: .bottom) {
+            HStack(spacing: 12) {
                 Button { sheet = .newFuel } label: {
                     Label("Fuel-up", systemImage: "fuelpump.fill")
-                        .labelStyle(.titleAndIcon)
+                        .frame(maxWidth: .infinity)
                 }
-                Spacer()
+                .tint(.fuel)
                 Button { sheet = .newService } label: {
                     Label("Service", systemImage: "wrench.and.screwdriver.fill")
-                        .labelStyle(.titleAndIcon)
+                        .frame(maxWidth: .infinity)
                 }
+                .tint(.service)
             }
+            .font(.headline)
+            .buttonStyle(.glassProminent)
+            .controlSize(.large)
+            .padding(.horizontal)
+            .padding(.bottom, 8)
         }
         .sheet(item: $sheet) { sheet in
             sheetContent(for: sheet)

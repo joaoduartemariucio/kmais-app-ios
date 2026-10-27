@@ -12,5 +12,9 @@ nonisolated struct MaintenanceStatus: Hashable, Sendable {
     let level: Level
     let progress: Double
     let remainingKilometers: Double?
-    let remainingDays: Int
+    let remainingDays: Int?
+    var overdueBy: MaintenanceForecast.Trigger?
+    var calendarDueDate: Date?
+
+    var isEstimatePassed: Bool { level != .overdue && (remainingDays ?? 0) < 0 }
 }

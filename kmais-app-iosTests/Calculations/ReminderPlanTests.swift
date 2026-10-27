@@ -58,6 +58,63 @@ struct ReminderPlanTests {
         #expect(try #require(planned.first).isOverdue)
     }
 
+    @Test("an overdue reminder repeats daily for a week, then weekly")
+    func overdueBackoff() {
+        #expect(ReminderPlan.overdueFireDate(since: day(0), now: hour(10, on: 3), calendar: utc) == hour(9, on: 4))
+        #expect(ReminderPlan.overdueFireDate(since: day(0), now: hour(10, on: 6), calendar: utc) == hour(9, on: 7))
+        #expect(ReminderPlan.overdueFireDate(since: day(0), now: hour(10, on: 7), calendar: utc) == hour(9, on: 14))
+        #expect(ReminderPlan.overdueFireDate(since: day(0), now: hour(8, on: 14), calendar: utc) == hour(9, on: 14))
+        #expect(ReminderPlan.overdueFireDate(since: day(0), now: hour(10, on: 14), calendar: utc) == hour(9, on: 21))
+    }
+
+    @Test("a passed pace estimate is not repeated until the service is really overdue")
+    func stalePaceEstimate() {
+        let rule = ServiceRule(vehicleID: testVehicleID, kind: .oilChange, kilometerInterval: 5_000)
+        let fuel = [full(10, 10_500, 30), full(20, 11_000, 30)]
+
+        #expect(ReminderPlan.reminders(for: [records(fuel: fuel, rules: [rule])], now: day(200), calendar: utc)
+            .isEmpty)
+    }
+
+    @Test("a km-only rule without a pace is notified once the odometer reaches it")
+    func distanceOverdueWithoutPace() throws {
+        let rule = ServiceRule(vehicleID: testVehicleID, kind: .chain, kilometerInterval: 1_000)
+        let fuel = [full(5, 11_200, 10)]
+        let vehicle = Vehicle(id: testVehicleID, name: "CB", initialOdometer: 10_000, createdAt: day(5))
+
+        let planned = ReminderPlan.reminders(
+            for: [records(vehicle: vehicle, fuel: fuel, rules: [rule])],
+            now: hour(10, on: 5),
+            calendar: utc
+        )
+
+        let reminder = try #require(planned.first)
+        #expect(reminder.isOverdue)
+        #expect(reminder.status.overdueBy == .distance)
+        #expect(reminder.currentOdometer == 11_200)
+        #expect(reminder.fireDate == hour(9, on: 6))
+    }
+
+    @Test("overdue by km counts from the first reading at or past the due km")
+    func overdueSinceDistance() throws {
+        let rule = ServiceRule(vehicleID: testVehicleID, kind: .chain, kilometerInterval: 1_000)
+        let fuel = [full(10, 10_600, 10), full(20, 11_100, 10), full(30, 11_500, 10)]
+
+        let planned = ReminderPlan.reminders(
+            for: [records(fuel: fuel, rules: [rule])],
+            now: hour(10, on: 40),
+            calendar: utc
+        )
+
+        let reminder = try #require(planned.first)
+        #expect(ReminderPlan.overdueSince(
+            due: reminder.due,
+            status: reminder.status,
+            history: [sample(0, 10_000), sample(10, 10_600), sample(20, 11_100), sample(30, 11_500)]
+        ) == day(20))
+        #expect(reminder.fireDate == hour(9, on: 41))
+    }
+
     @Test("a distance rule without a km pace yet has nothing to schedule")
     func distanceRuleWithoutHistory() {
         let rule = ServiceRule(vehicleID: testVehicleID, kind: .tires, kilometerInterval: 20_000)

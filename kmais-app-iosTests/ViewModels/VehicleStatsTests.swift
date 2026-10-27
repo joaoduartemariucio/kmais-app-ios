@@ -80,10 +80,28 @@ struct VehicleStatsTests {
             status: MaintenanceStatus(level: .overdue, progress: 1, remainingKilometers: -5, remainingDays: -5)
         )
 
-        #expect(passed.isEstimatePassed)
+        #expect(passed.status.isEstimatePassed)
         #expect(passed.relativeDue == String(localized: "Estimate passed"))
-        #expect(!overdue.isEstimatePassed)
+        #expect(!overdue.status.isEstimatePassed)
         #expect(overdue.relativeDue == (-5).formattedRelativeDays)
+
+        let dateless = VehicleStats.DueItem(
+            due: due,
+            status: MaintenanceStatus(level: .onTrack, progress: 0.5, remainingKilometers: 500, remainingDays: nil)
+        )
+        #expect(dateless.relativeDue == 500.0.formattedRemainingKilometers)
+    }
+
+    @Test("a km-only rule without a pace still shows, after the dated ones")
+    func datelessDueIsShown() {
+        let chain = ServiceRule(vehicleID: testVehicleID, kind: .chain, kilometerInterval: 1_000)
+        let inspection = ServiceRule(vehicleID: testVehicleID, kind: .inspection, monthInterval: 12)
+
+        let result = stats(rules: [chain, inspection])
+
+        #expect(result.dues.map(\.due.rule.kind) == [.inspection, .chain])
+        #expect(result.dues.last?.due.forecast.dueDate == nil)
+        #expect(result.dues.last?.status.remainingKilometers == 1_000)
     }
 
     @Test("sections can be filtered by record type and know their total")
