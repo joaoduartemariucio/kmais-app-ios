@@ -73,15 +73,11 @@ final class VehicleDetailViewModel {
         if case .loaded(let content) = state { content.rules } else { [] }
     }
 
-    var lastOdometer: Double? {
-        Odometer.current(Odometer.samples(vehicle: vehicle, fuel: fuel, services: services))
-    }
-
-    func lastOdometer(excluding item: VehicleTimeline.Item) -> Double? {
-        let remainingFuel = fuel.filter { $0.id != item.id }
-        let remainingServices = services.filter { $0.id != item.id }
-        return Odometer.current(
-            Odometer.samples(vehicle: vehicle, fuel: remainingFuel, services: remainingServices)
+    func odometerReadings(excluding item: VehicleTimeline.Item? = nil) -> [OdometerSample] {
+        Odometer.samples(
+            vehicle: vehicle,
+            fuel: fuel.filter { $0.id != item?.id },
+            services: services.filter { $0.id != item?.id }
         )
     }
 

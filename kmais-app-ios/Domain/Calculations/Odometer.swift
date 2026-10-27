@@ -5,6 +5,14 @@ nonisolated enum Odometer {
         samples.sortedChronologically().last?.odometer
     }
 
+    static func neighbors(of date: Date, in samples: [OdometerSample]) -> OdometerNeighbors {
+        let sorted = samples.sortedChronologically()
+        return OdometerNeighbors(
+            previous: sorted.last { $0.date <= date }?.odometer,
+            next: sorted.first { $0.date > date }?.odometer
+        )
+    }
+
     static func samples(
         vehicle: Vehicle,
         fuel: [FuelEntry],

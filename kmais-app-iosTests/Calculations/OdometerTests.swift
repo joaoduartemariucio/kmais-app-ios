@@ -37,6 +37,29 @@ struct OdometerTests {
         #expect(Odometer.current(scenario.samples) == scenario.expected)
     }
 
+    @Test("neighbors(of:in:) brackets a date between the readings around it")
+    func neighborsInTheMiddle() {
+        let samples = [sample(0, 10_000), sample(10, 11_000), sample(20, 12_000)]
+
+        let neighbors = Odometer.neighbors(of: day(15), in: samples)
+
+        #expect(neighbors == OdometerNeighbors(previous: 11_000, next: 12_000))
+    }
+
+    @Test("neighbors(of:in:) has no next reading after the most recent one")
+    func neighborsAtTheEnd() {
+        let neighbors = Odometer.neighbors(of: day(30), in: [sample(0, 10_000), sample(10, 11_000)])
+
+        #expect(neighbors == OdometerNeighbors(previous: 11_000, next: nil))
+    }
+
+    @Test("neighbors(of:in:) has no previous reading before the first one")
+    func neighborsAtTheStart() {
+        let neighbors = Odometer.neighbors(of: day(-5), in: [sample(0, 10_000)])
+
+        #expect(neighbors == OdometerNeighbors(previous: nil, next: 10_000))
+    }
+
     @Test("samples(vehicle:fuel:services:) includes the vehicle registration")
     func samplesIncludeRegistration() {
         let vehicle = Vehicle(

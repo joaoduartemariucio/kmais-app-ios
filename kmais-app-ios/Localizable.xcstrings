@@ -813,13 +813,24 @@
         }
       }
     },
-    "The odometer must be above the last record (%@)." : {
+    "The odometer must be above the previous record (%@)." : {
       "extractionState" : "manual",
       "localizations" : {
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O odômetro precisa ser maior que o do último registro (%@)."
+            "value" : "O odômetro precisa ser maior que o do registro anterior (%@)."
+          }
+        }
+      }
+    },
+    "The odometer must be below the next record (%@)." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O odômetro precisa ser menor que o do registro seguinte (%@)."
           }
         }
       }

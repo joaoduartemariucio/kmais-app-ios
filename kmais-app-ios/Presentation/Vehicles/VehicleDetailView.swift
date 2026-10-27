@@ -74,25 +74,25 @@ struct VehicleDetailView: View {
         case .newFuel:
             FuelEntryFormView(
                 mode: .create(vehicleID: vehicle.id),
-                lastOdometer: viewModel?.lastOdometer,
+                otherReadings: viewModel?.odometerReadings() ?? [],
                 onSaved: reload
             )
         case .editFuel(let entry):
             FuelEntryFormView(
                 mode: .edit(entry),
-                lastOdometer: viewModel?.lastOdometer(excluding: .fuel(entry)),
+                otherReadings: viewModel?.odometerReadings(excluding: .fuel(entry)) ?? [],
                 onSaved: reload
             )
         case .newService:
             ServiceEntryFormView(
                 mode: .create(vehicleID: vehicle.id),
-                lastOdometer: viewModel?.lastOdometer,
+                otherReadings: viewModel?.odometerReadings() ?? [],
                 onSaved: reload
             )
         case .editService(let entry):
             ServiceEntryFormView(
                 mode: .edit(entry),
-                lastOdometer: viewModel?.lastOdometer(excluding: .service(entry)),
+                otherReadings: viewModel?.odometerReadings(excluding: .service(entry)) ?? [],
                 onSaved: reload
             )
         case .editVehicle(let rules):

@@ -2,7 +2,7 @@ import SwiftUI
 
 struct FuelEntryFormView: View {
     let mode: FuelEntryFormViewModel.Mode
-    let lastOdometer: Double?
+    let otherReadings: [OdometerSample]
     let onSaved: () -> Void
 
     @Environment(\.dependencies) private var dependencies
@@ -37,7 +37,7 @@ struct FuelEntryFormView: View {
                     mode: mode,
                     repository: dependencies.fuelEntryRepository,
                     dateProvider: dependencies.dateProvider,
-                    lastOdometer: lastOdometer
+                    otherReadings: otherReadings
                 )
             }
         }
@@ -92,7 +92,7 @@ struct FuelEntryFormView: View {
 #Preview {
     FuelEntryFormView(
         mode: .create(vehicleID: PreviewData.car.id),
-        lastOdometer: 42_000,
+        otherReadings: [OdometerSample(date: .now.addingTimeInterval(-7 * 86_400), odometer: 42_000)],
         onSaved: {}
     )
     .environment(\.dependencies, .preview)

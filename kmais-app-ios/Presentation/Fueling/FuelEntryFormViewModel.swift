@@ -18,17 +18,17 @@ final class FuelEntryFormViewModel {
 
     private let mode: Mode
     private let repository: FuelEntryRepository
-    private let lastOdometer: Double?
+    private let otherReadings: [OdometerSample]
 
     init(
         mode: Mode,
         repository: FuelEntryRepository,
         dateProvider: DateProvider,
-        lastOdometer: Double?
+        otherReadings: [OdometerSample]
     ) {
         self.mode = mode
         self.repository = repository
-        self.lastOdometer = lastOdometer
+        self.otherReadings = otherReadings
 
         switch mode {
         case .create:
@@ -58,13 +58,7 @@ final class FuelEntryFormViewModel {
     var issues: [ValidationIssue] {
         var issues: [ValidationIssue] = []
 
-        if let parsedOdometer {
-            if let lastOdometer, parsedOdometer <= lastOdometer {
-                issues.append(.odometerNotAfterLast(last: lastOdometer))
-            }
-        } else {
-            issues.append(.odometerRequired)
-        }
+        issues += ValidationIssue.odometer(parsedOdometer, at: date, otherReadings: otherReadings)
 
         if let parsedLiters {
             if parsedLiters <= 0 { issues.append(.litersNotPositive) }

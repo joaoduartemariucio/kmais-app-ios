@@ -114,14 +114,14 @@ struct VehicleDetailViewModelTests {
         #expect(content.sections[0].month > content.sections[1].month)
     }
 
-    @Test("lastOdometer excluding an entry ignores that entry")
-    func lastOdometerExcluding() async {
+    @Test("odometer readings excluding an entry ignore that entry")
+    func odometerReadingsExcluding() async {
         let latest = Self.fuel(40, 1_400)
         let viewModel = makeViewModel(fuel: [Self.fuel(1, 1_000), latest])
         await viewModel.load()
 
-        #expect(viewModel.lastOdometer == 1_400)
-        #expect(viewModel.lastOdometer(excluding: .fuel(latest)) == 1_000)
+        #expect(Odometer.current(viewModel.odometerReadings()) == 1_400)
+        #expect(Odometer.current(viewModel.odometerReadings(excluding: .fuel(latest))) == 1_000)
     }
 
     @Test("deleting an entry reloads without it")

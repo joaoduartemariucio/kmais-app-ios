@@ -18,17 +18,17 @@ final class ServiceEntryFormViewModel {
 
     private let mode: Mode
     private let repository: ServiceRepository
-    private let lastOdometer: Double?
+    private let otherReadings: [OdometerSample]
 
     init(
         mode: Mode,
         repository: ServiceRepository,
         dateProvider: DateProvider,
-        lastOdometer: Double?
+        otherReadings: [OdometerSample]
     ) {
         self.mode = mode
         self.repository = repository
-        self.lastOdometer = lastOdometer
+        self.otherReadings = otherReadings
 
         switch mode {
         case .create:
@@ -53,13 +53,7 @@ final class ServiceEntryFormViewModel {
     var issues: [ValidationIssue] {
         var issues: [ValidationIssue] = []
 
-        if let parsedOdometer {
-            if let lastOdometer, parsedOdometer <= lastOdometer {
-                issues.append(.odometerNotAfterLast(last: lastOdometer))
-            }
-        } else {
-            issues.append(.odometerRequired)
-        }
+        issues += ValidationIssue.odometer(parsedOdometer, at: date, otherReadings: otherReadings)
 
         if parsedCost < 0 { issues.append(.costNegative) }
 
