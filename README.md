@@ -9,6 +9,8 @@
 ![Swift](https://img.shields.io/badge/Swift-SwiftUI%20%2B%20SwiftData-F05138?logo=swift&logoColor=white)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
+`Clean Architecture` · `MVVM` · `Repository` · `SOLID` · `Dependency Injection` · `Swift Concurrency` · `Swift Testing` · `CI`
+
 </div>
 
 <p align="center">
@@ -31,8 +33,10 @@
 
 ## Architecture
 
-Three layers in a single app target, with **Repository + MVVM** and the dependency
-rules enforced by SwiftLint in CI.
+A pragmatic take on **Clean Architecture**: **MVVM** in the presentation layer, the
+**Repository** pattern for persistence and **SOLID** — dependency inversion above all — holding
+it together. Three layers live in a single app target, and their boundaries are enforced by
+SwiftLint in CI.
 
 ```mermaid
 graph LR
@@ -50,7 +54,41 @@ graph LR
 | `Presentation` | `Domain`, SwiftUI | `Data` |
 | `App` | everything | — |
 
-Highlights:
+### Patterns and where they live
+
+| Pattern | Role | In the code |
+|---|---|---|
+| **Clean Architecture** | Business rules at the center, frameworks at the edges | `Domain/` imports Foundation only; SwiftData and SwiftUI stay in `Data/` and `Presentation/` |
+| **MVVM** | Screen state and logic out of the views | One `@MainActor @Observable` ViewModel per screen (`VehicleDetailViewModel`, `FuelEntryFormViewModel`, …) |
+| **Repository** | Persistence behind an interface | Protocols in `Domain/Repositories`, `@ModelActor` SwiftData implementations in `Data/Repositories` |
+| **Mapper** | Storage models never leak | `Data/Mappers` turns `@Model` types into plain `Sendable` entities |
+| **Dependency Injection** | One composition root | `App/AppDependencies` is the only place that creates concrete types, injected via `@Environment` |
+
+### SOLID in practice
+
+- **S — Single responsibility:** one ViewModel per screen; calculations split by concern
+  (`Consumption`, `Cost`, `Odometer`, `Maintenance`); mapping separated from persistence.
+- **O — Open/closed:** new behavior is additive — e.g. reactive reads via iOS 27's
+  `ResultsObserver` will be a new repository method, with no existing signature changing.
+- **L — Liskov substitution:** in-memory fake repositories replace the SwiftData ones in tests,
+  and the ViewModels can't tell the difference.
+- **I — Interface segregation:** three small repository protocols (`VehicleRepository`,
+  `FuelEntryRepository`, `ServiceRepository`) instead of one data manager.
+- **D — Dependency inversion:** ViewModels and repositories both depend on abstractions owned
+  by `Domain`; nothing in `Domain` knows SwiftData or SwiftUI exist.
+
+### Pragmatic trade-offs
+
+Clean Architecture sized for a one-developer app, on purpose:
+
+- **No use-case layer** — most would be one-line pass-throughs; business rules live in
+  `Domain/Calculations` and are tested there.
+- **Layers as folders, not modules** — boundaries are guarded by lint instead of the compiler;
+  `Domain` and `Data` become Swift packages once a second target (widget, App Intents) needs them.
+
+Each trade-off, with what it costs and when to revisit it, is in [decisions](docs/decisions.md).
+
+### Highlights
 
 - **Pure, deterministic domain.** Consumption, cost, odometer and maintenance forecast are
   pure functions in `Domain/Calculations`. The forecast never reads the clock — the latest

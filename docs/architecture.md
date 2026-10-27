@@ -1,6 +1,11 @@
 # Architecture
 
-Kmais is a single iOS target split into four folders. The split is by folder, not by
+Kmais follows a pragmatic **Clean Architecture** with **MVVM** for screens, the **Repository**
+pattern for persistence and **SOLID** principles — mainly dependency inversion. The
+[README](../README.md#patterns-and-where-they-live) maps each pattern and principle to the
+code; this document covers how the pieces work.
+
+The app is a single iOS target split into four folders. The split is by folder, not by
 module, and the boundaries between them are enforced by SwiftLint.
 
 ```mermaid
