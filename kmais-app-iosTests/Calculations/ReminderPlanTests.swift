@@ -40,11 +40,11 @@ struct ReminderPlanTests {
         #expect(planned.count == 1)
         #expect(reminder.id == rule.id)
         #expect(reminder.due.forecast.trigger == .calendar)
-        #expect(reminder.fireDate == utc.date(
+        #expect(try reminder.fireDate == utc.date(
             bySettingHour: 9,
             minute: 0,
             second: 0,
-            of: reminder.due.forecast.dueDate
+            of: #require(reminder.due.forecast.dueDate)
         ))
         #expect(!reminder.isOverdue)
     }
@@ -110,9 +110,76 @@ struct ReminderPlanTests {
         #expect(ReminderPlan.overdueSince(
             due: reminder.due,
             status: reminder.status,
-            history: [sample(0, 10_000), sample(10, 10_600), sample(20, 11_100), sample(30, 11_500)]
+            history: [sample(0, 10_000), sample(10, 10_600), sample(20, 11_100), sample(30, 11_500)],
+            now: day(40),
+            calendar: utc
         ) == day(20))
         #expect(reminder.fireDate == hour(9, on: 41))
+    }
+
+    @Test("a passed pace estimate still reminds on the calendar due day")
+    func calendarDayAfterStaleEstimate() throws {
+        let rule = ServiceRule(vehicleID: testVehicleID, kind: .oilChange, kilometerInterval: 5_000, monthInterval: 12)
+        let fuel = [full(10, 10_500, 30), full(20, 11_000, 30)]
+
+        let planned = ReminderPlan.reminders(for: [records(fuel: fuel, rules: [rule])], now: day(200), calendar: utc)
+
+        let reminder = try #require(planned.first)
+        #expect(!reminder.isOverdue)
+        #expect(reminder.fireDate == hour(9, on: 365))
+    }
+
+    @Test("overdue both ways counts from the earlier date")
+    func overdueSinceEarlierDate() throws {
+        let rule = ServiceRule(vehicleID: testVehicleID, kind: .oilChange, kilometerInterval: 1_000, monthInterval: 1)
+        let fuel = [full(10, 11_200, 10), full(50, 11_400, 10)]
+
+        let planned = ReminderPlan.reminders(
+            for: [records(fuel: fuel, rules: [rule])],
+            now: hour(10, on: 60),
+            calendar: utc
+        )
+
+        let reminder = try #require(planned.first)
+        #expect(reminder.status.overdueBy == .calendar)
+        #expect(ReminderPlan.overdueSince(
+            due: reminder.due,
+            status: reminder.status,
+            history: [sample(0, 10_000), sample(10, 11_200), sample(50, 11_400)],
+            now: hour(10, on: 60),
+            calendar: utc
+        ) == day(10))
+    }
+
+    @Test("without a reading past the due km, overdue counts from the latest reading")
+    func overdueSinceFallsBackToLatestReading() {
+        let due = ServiceDue(
+            rule: ServiceRule(vehicleID: testVehicleID, kind: .chain, kilometerInterval: 1_000),
+            forecast: MaintenanceForecast(
+                dueDate: nil,
+                trigger: .distance,
+                dueOdometer: 11_000,
+                averageKilometersPerMonth: nil
+            ),
+            since: sample(30, 10_000)
+        )
+        let status = MaintenanceStatus(
+            level: .overdue,
+            progress: 1,
+            remainingKilometers: -200,
+            remainingDays: nil,
+            overdueBy: .distance
+        )
+
+        #expect(ReminderPlan.overdueSince(
+            due: due,
+            status: status,
+            history: [sample(0, 10_000), sample(20, 11_200)],
+            now: day(40),
+            calendar: utc
+        ) == day(20))
+        #expect(ReminderPlan
+            .overdueSince(due: due, status: status, history: [], now: day(40), calendar: utc) == day(40))
     }
 
     @Test("a distance rule without a km pace yet has nothing to schedule")

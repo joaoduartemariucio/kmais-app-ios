@@ -69,10 +69,10 @@ final class ServiceReminderSync {
         let forecast = planned.due.forecast
         let status = planned.status
 
+        let lastReading = planned.currentOdometer.formattedKilometers()
+
         let body = if status.overdueBy == .distance, let odometer = forecast.dueOdometer {
-            String(
-                localized: "Was due at \(odometer.formattedKilometers()) (last reading \(planned.currentOdometer.formattedKilometers()))."
-            )
+            String(localized: "Was due at \(odometer.formattedKilometers()) (last reading \(lastReading)).")
         } else if status.overdueBy == .calendar, let date = status.calendarDueDate {
             String(localized: "Overdue since \(date.formattedFullDate).")
         } else if let date = forecast.dueDate {

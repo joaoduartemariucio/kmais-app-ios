@@ -132,7 +132,7 @@ struct MaintenanceTests {
 
         #expect(forecast.trigger == .distance)
         #expect(forecast.dueDate == day(20))
-        #expect(forecast.dueDate < day(100))
+        #expect(try #require(forecast.dueDate) < day(100))
     }
 
     @Test("a vehicle that has not moved falls back to the time rule")
@@ -301,7 +301,7 @@ struct NextServiceDueTests {
         )
 
         #expect(due.rule.kind == .chain)
-        #expect(due.forecast.dueDate < day(100))
+        #expect(try #require(due.forecast.dueDate) < day(100))
     }
 
     @Test("a tie on the due date resolves deterministically by kind")

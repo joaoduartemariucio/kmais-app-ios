@@ -122,7 +122,8 @@ struct MaintenanceStatusTests {
         #expect(byCalendar.overdueBy == .calendar)
         #expect(byCalendar.calendarDueDate == day(31))
 
-        #expect(status(both, odometer: 20_000, now: 40).overdueBy == .distance)
+        #expect(status(both, odometer: 20_000, now: 40).overdueBy == .calendar)
+        #expect(status(both, odometer: 20_000, now: 20).overdueBy == .distance)
         #expect(status(both, odometer: 12_000, now: 10).overdueBy == nil)
     }
 

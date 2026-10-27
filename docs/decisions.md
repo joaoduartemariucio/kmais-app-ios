@@ -145,10 +145,31 @@ covers every change without each form knowing about reminders.
 
 ### When a reminder fires
 
-At 9:00 on the due day. If that moment has passed, at the next 9:00 — an overdue service
-reminds the user once a day while the app keeps being opened, until the service is logged.
-Permission to notify is asked only when there is something to schedule. Distance-only rules
-wait until the vehicle has enough history to estimate its km/day pace.
+Reminders use the same status as the screen (`Maintenance.status`), so a notification never
+calls something overdue that the app shows as due soon.
+
+- **Ahead of time:** at 9:00 on the forecast due day.
+- **Overdue** (calendar date passed, or the odometer reached the due km): at the next 9:00,
+  daily for the first 7 days, then weekly, until the service is logged. "Overdue since" is
+  the calendar due date, or the date of the first reading at or past the due km. Daily
+  nagging forever teaches people to turn notifications off.
+- **Pace estimate passed, not overdue:** no repeats. The notification already fired on the
+  estimated day; repeating it daily for a car that sits in the garage would be noise. A rule
+  that also has a months interval is still reminded at 9:00 on its calendar due day.
+- **Km-only rule without a km/day pace** (one reading, or no movement): no date to schedule,
+  so it is notified only once a logged reading reaches the due km. Readings only change when
+  the user logs something, and every log triggers a sync, so that is when it fires.
+
+When a rule is overdue both ways, "since" is the earlier of the two dates and the text says
+"Overdue since" the calendar date. A rule with both intervals whose pace estimate has passed
+still gets a reminder at 9:00 on its calendar due day.
+
+Only one notification is pending per rule, and it is re-planned on every sync, so the daily
+and weekly repeats happen only while the app keeps being opened.
+
+Each notification names the vehicle and the service. Overdue by km says the due km and the
+last reading, because the app only knows the last logged odometer, not the live one.
+Permission to notify is asked only when there is something to schedule.
 
 ### `ServiceReminderSync` is the first use case
 
@@ -169,8 +190,8 @@ counted from the last service of that kind (or the vehicle's creation).
   the forecast date ≤ 15% of the period, clamped to 15–30 days. The floors keep short
   intervals (a 1,000 km chain) from warning one day ahead; the caps keep long ones (40,000 km
   spark plugs) from warning months ahead. Same rule for cars and motorcycles.
-- Reminder notifications still say "Overdue since" from the forecast date (`ReminderPlan`),
-  which can disagree with the screen when only the pace estimate has passed.
+- A km-only rule on a vehicle without a km/day pace yet still shows, from km alone, with a
+  hint to log another reading; it has no date until there is a second reading with distance.
 
 ## Presentation
 

@@ -52,25 +52,34 @@ nonisolated enum ReminderPlan {
         calendar: Calendar
     ) -> Date? {
         if status.level == .overdue {
-            let since = overdueSince(due: due, status: status, history: history) ?? now
+            let since = overdueSince(due: due, status: status, history: history, now: now, calendar: calendar)
             return overdueFireDate(since: since, now: now, calendar: calendar)
         }
-        guard let dueDate = due.forecast.dueDate else { return nil }
-        let onDueDay = morning(of: dueDate, calendar: calendar)
-        return onDueDay > now ? onDueDay : nil
+        return [due.forecast.dueDate, status.calendarDueDate]
+            .compactMap { $0.map { morning(of: $0, calendar: calendar) } }
+            .filter { $0 > now }
+            .min()
     }
 
-    static func overdueSince(due: ServiceDue, status: MaintenanceStatus, history: [OdometerSample]) -> Date? {
-        switch status.overdueBy {
-        case .calendar:
-            status.calendarDueDate
-        case .distance:
-            due.forecast.dueOdometer.flatMap { dueOdometer in
-                history.sortedChronologically().first { $0.date >= due.since.date && $0.odometer >= dueOdometer }?.date
-            }
-        case nil:
-            nil
+    static func overdueSince(
+        due: ServiceDue,
+        status: MaintenanceStatus,
+        history: [OdometerSample],
+        now: Date,
+        calendar: Calendar = .current
+    ) -> Date {
+        let sorted = history.sortedChronologically()
+        var candidates: [Date] = []
+
+        if let calendarDueDate = status.calendarDueDate,
+           calendarDueDate < calendar.startOfDay(for: now) {
+            candidates.append(calendarDueDate)
         }
+        if let remaining = status.remainingKilometers, remaining <= 0, let dueOdometer = due.forecast.dueOdometer {
+            let reached = sorted.first { $0.date >= due.since.date && $0.odometer >= dueOdometer }
+            candidates.append(reached?.date ?? sorted.last?.date ?? now)
+        }
+        return candidates.min() ?? now
     }
 
     static let dailyOverdueDays = 7

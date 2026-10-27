@@ -168,7 +168,7 @@ nonisolated extension Maintenance {
             let remaining = due.since.odometer + interval - currentOdometer
             remainingKilometers = remaining
             distanceProgress = (interval - remaining) / interval
-            if remaining <= 0 { overdueBy = .distance }
+            if remaining <= 0, overdueBy == nil { overdueBy = .distance }
             isDueSoon = isDueSoon || remaining <= window(for: interval, clampedTo: dueSoonKilometers)
         }
 
