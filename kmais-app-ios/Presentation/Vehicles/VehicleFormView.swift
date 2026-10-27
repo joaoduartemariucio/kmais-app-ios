@@ -99,6 +99,7 @@ struct VehicleFormView: View {
                 ValidationFooter(issues: viewModel.issues)
             }
         }
+        .dismissesKeyboard()
     }
 }
 

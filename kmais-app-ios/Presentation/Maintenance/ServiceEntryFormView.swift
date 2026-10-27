@@ -87,6 +87,7 @@ struct ServiceEntryFormView: View {
                 ValidationFooter(issues: viewModel.issues)
             }
         }
+        .dismissesKeyboard()
     }
 }
 

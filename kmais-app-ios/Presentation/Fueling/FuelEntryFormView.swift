@@ -86,6 +86,7 @@ struct FuelEntryFormView: View {
                 ValidationFooter(issues: viewModel.issues)
             }
         }
+        .dismissesKeyboard()
     }
 }
 
