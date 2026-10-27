@@ -54,7 +54,8 @@ struct VehicleListView: View {
                     scope: scope,
                     vehicleRepository: dependencies.vehicleRepository,
                     fuelEntryRepository: dependencies.fuelEntryRepository,
-                    serviceRepository: dependencies.serviceRepository
+                    serviceRepository: dependencies.serviceRepository,
+                    reminders: dependencies.reminderSync
                 )
             }
             await viewModel?.load()

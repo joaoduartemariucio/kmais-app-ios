@@ -266,6 +266,28 @@
         }
       }
     },
+    "Due at %@, around %@." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prevista para %@, por volta de %@."
+          }
+        }
+      }
+    },
+    "Due on %@." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prevista para %@."
+          }
+        }
+      }
+    },
     "Edit" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -677,6 +699,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Outro"
+          }
+        }
+      }
+    },
+    "Overdue since %@." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Atrasada desde %@."
           }
         }
       }

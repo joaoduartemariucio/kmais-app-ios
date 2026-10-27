@@ -28,17 +28,20 @@ final class VehicleListViewModel {
     private let vehicleRepository: VehicleRepository
     private let fuelEntryRepository: FuelEntryRepository
     private let serviceRepository: ServiceRepository
+    private let reminders: ServiceReminderSync?
 
     init(
         scope: Scope,
         vehicleRepository: VehicleRepository,
         fuelEntryRepository: FuelEntryRepository,
-        serviceRepository: ServiceRepository
+        serviceRepository: ServiceRepository,
+        reminders: ServiceReminderSync? = nil
     ) {
         self.scope = scope
         self.vehicleRepository = vehicleRepository
         self.fuelEntryRepository = fuelEntryRepository
         self.serviceRepository = serviceRepository
+        self.reminders = reminders
     }
 
     func load() async {
@@ -62,6 +65,7 @@ final class VehicleListViewModel {
         } catch {
             state = .failed(message: error.localizedDescription)
         }
+        await reminders?.sync()
     }
 
     func setArchived(_ isArchived: Bool, on vehicle: Vehicle) async {

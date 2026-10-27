@@ -59,7 +59,8 @@ struct VehicleDetailView: View {
                     vehicle: vehicle,
                     fuelEntryRepository: dependencies.fuelEntryRepository,
                     serviceRepository: dependencies.serviceRepository,
-                    dateProvider: dependencies.dateProvider
+                    dateProvider: dependencies.dateProvider,
+                    reminders: dependencies.reminderSync
                 )
             }
             await viewModel?.load()

@@ -135,3 +135,31 @@ struct FixedDateProvider: DateProvider {
         return calendar
     }()
 }
+
+actor FakeReminderScheduler: ReminderScheduler {
+    private(set) var scheduled: [UUID: Reminder]
+    private(set) var authorizationRequests = 0
+    let isAuthorized: Bool
+
+    init(pending: [Reminder] = [], isAuthorized: Bool = true) {
+        scheduled = Dictionary(pending.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        self.isAuthorized = isAuthorized
+    }
+
+    func requestAuthorization() async throws -> Bool {
+        authorizationRequests += 1
+        return isAuthorized
+    }
+
+    func schedule(_ reminder: Reminder) async throws {
+        scheduled[reminder.id] = reminder
+    }
+
+    func cancel(id: UUID) async throws {
+        scheduled.removeValue(forKey: id)
+    }
+
+    func pendingIdentifiers() async -> [UUID] {
+        Array(scheduled.keys)
+    }
+}

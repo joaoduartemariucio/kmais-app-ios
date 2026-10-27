@@ -11,6 +11,7 @@ struct AppDependencies {
     let serviceRepository: ServiceRepository
     let dateProvider: DateProvider
     let reminderScheduler: ReminderScheduler
+    let reminderSync: ServiceReminderSync
 
     let isUsingFallbackStore: Bool
 
@@ -22,6 +23,13 @@ struct AppDependencies {
         serviceRepository = SwiftDataServiceRepository(modelContainer: modelContainer)
         dateProvider = SystemDateProvider()
         reminderScheduler = UserNotificationReminderScheduler()
+        reminderSync = ServiceReminderSync(
+            vehicleRepository: vehicleRepository,
+            fuelEntryRepository: fuelEntryRepository,
+            serviceRepository: serviceRepository,
+            scheduler: reminderScheduler,
+            dateProvider: dateProvider
+        )
     }
 
     static func live() -> AppDependencies {

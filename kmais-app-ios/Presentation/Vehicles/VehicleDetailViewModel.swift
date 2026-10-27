@@ -22,6 +22,7 @@ final class VehicleDetailViewModel {
     private let fuelEntryRepository: FuelEntryRepository
     private let serviceRepository: ServiceRepository
     private let dateProvider: DateProvider
+    private let reminders: ServiceReminderSync?
 
     private var fuel: [FuelEntry] = []
     private var services: [ServiceEntry] = []
@@ -30,12 +31,14 @@ final class VehicleDetailViewModel {
         vehicle: Vehicle,
         fuelEntryRepository: FuelEntryRepository,
         serviceRepository: ServiceRepository,
-        dateProvider: DateProvider
+        dateProvider: DateProvider,
+        reminders: ServiceReminderSync? = nil
     ) {
         self.vehicle = vehicle
         self.fuelEntryRepository = fuelEntryRepository
         self.serviceRepository = serviceRepository
         self.dateProvider = dateProvider
+        self.reminders = reminders
     }
 
     func load() async {
@@ -67,6 +70,7 @@ final class VehicleDetailViewModel {
         } catch {
             state = .failed(message: error.localizedDescription)
         }
+        await reminders?.sync()
     }
 
     var rules: [ServiceRule] {
