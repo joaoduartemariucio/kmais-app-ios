@@ -71,8 +71,8 @@ struct VehicleFormView: View {
                 TextField("Plate", text: $viewModel.plate)
                     .textInputAutocapitalization(.characters)
                     .autocorrectionDisabled()
-                LabeledNumberField("Initial odometer", unit: "km", text: $viewModel.initialOdometer)
-                LabeledNumberField("Tank capacity", unit: "L", text: $viewModel.tankCapacity)
+                LabeledNumberField("Initial odometer", unit: "km", style: .kilometers, text: $viewModel.initialOdometer)
+                LabeledNumberField("Tank capacity", unit: "L", style: .liters, text: $viewModel.tankCapacity)
             }
 
             Section("Service reminders") {

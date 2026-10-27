@@ -40,15 +40,15 @@ final class ServiceEntryFormViewModel {
         case .edit(let entry):
             kind = entry.kind
             date = entry.date
-            odometer = NumberInput.text(entry.odometer)
-            cost = NumberInput.text(entry.cost)
+            odometer = NumberInput.text(entry.odometer, style: .kilometers)
+            cost = NumberInput.text(entry.cost, style: .money)
             notes = entry.notes
         }
     }
 
-    var parsedOdometer: Double? { NumberInput.double(odometer) }
+    var parsedOdometer: Double? { NumberInput.double(odometer, style: .kilometers) }
 
-    var parsedCost: Decimal { NumberInput.decimal(cost) ?? 0 }
+    var parsedCost: Decimal { NumberInput.decimal(cost, style: .money) ?? 0 }
 
     var issues: [ValidationIssue] {
         var issues: [ValidationIssue] = []

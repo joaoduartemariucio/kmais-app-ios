@@ -10,8 +10,8 @@ struct ServiceRuleRow: View {
                     Text(kind.label).tag(kind)
                 }
             }
-            LabeledNumberField("Every", unit: "km", text: $rule.kilometerInterval)
-            LabeledNumberField("Or every", unit: "months", text: $rule.monthInterval)
+            LabeledNumberField("Every", unit: "km", style: .kilometers, text: $rule.kilometerInterval)
+            LabeledNumberField("Or every", unit: "months", style: .months, text: $rule.monthInterval)
             ValidationFooter(issues: rule.issues)
         }
         .padding(.vertical, 4)

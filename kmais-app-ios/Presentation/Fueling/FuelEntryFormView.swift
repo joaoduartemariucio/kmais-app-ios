@@ -62,9 +62,9 @@ struct FuelEntryFormView: View {
         Form {
             Section {
                 DatePicker("Date", selection: $viewModel.date, displayedComponents: .date)
-                LabeledNumberField("Odometer", unit: "km", text: $viewModel.odometer)
-                LabeledNumberField("Liters", unit: "L", text: $viewModel.liters)
-                LabeledNumberField("Price per liter", text: $viewModel.pricePerLiter)
+                LabeledNumberField("Odometer", unit: "km", style: .kilometers, text: $viewModel.odometer)
+                LabeledNumberField("Liters", unit: "L", style: .liters, text: $viewModel.liters)
+                LabeledNumberField("Price per liter", style: .fuelPrice, text: $viewModel.pricePerLiter)
                 Toggle("Full tank", isOn: $viewModel.isFullTank)
             }
 

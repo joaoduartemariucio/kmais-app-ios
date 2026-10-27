@@ -67,8 +67,8 @@ struct ServiceEntryFormView: View {
                     }
                 }
                 DatePicker("Date", selection: $viewModel.date, displayedComponents: .date)
-                LabeledNumberField("Odometer", unit: "km", text: $viewModel.odometer)
-                LabeledNumberField("Cost", text: $viewModel.cost)
+                LabeledNumberField("Odometer", unit: "km", style: .kilometers, text: $viewModel.odometer)
+                LabeledNumberField("Cost", style: .money, text: $viewModel.cost)
             }
 
             Section("Notes") {

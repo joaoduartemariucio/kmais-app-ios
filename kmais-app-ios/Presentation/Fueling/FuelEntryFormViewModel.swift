@@ -39,16 +39,16 @@ final class FuelEntryFormViewModel {
             isFullTank = true
         case .edit(let entry):
             date = entry.date
-            odometer = NumberInput.text(entry.odometer)
-            liters = NumberInput.text(entry.liters)
-            pricePerLiter = NumberInput.text(entry.pricePerLiter)
+            odometer = NumberInput.text(entry.odometer, style: .kilometers)
+            liters = NumberInput.text(entry.liters, style: .liters)
+            pricePerLiter = NumberInput.text(entry.pricePerLiter, style: .fuelPrice)
             isFullTank = entry.isFullTank
         }
     }
 
-    var parsedOdometer: Double? { NumberInput.double(odometer) }
-    var parsedLiters: Double? { NumberInput.double(liters) }
-    var parsedPrice: Decimal? { NumberInput.decimal(pricePerLiter) }
+    var parsedOdometer: Double? { NumberInput.double(odometer, style: .kilometers) }
+    var parsedLiters: Double? { NumberInput.double(liters, style: .liters) }
+    var parsedPrice: Decimal? { NumberInput.decimal(pricePerLiter, style: .fuelPrice) }
 
     var totalCost: Decimal? {
         guard let parsedLiters, let parsedPrice else { return nil }

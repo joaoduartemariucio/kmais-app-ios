@@ -19,17 +19,17 @@ final class VehicleFormViewModel {
         init(rule: ServiceRule) {
             id = rule.id
             kind = rule.kind
-            kilometerInterval = NumberInput.text(rule.kilometerInterval)
-            monthInterval = rule.monthInterval.map(String.init) ?? ""
+            kilometerInterval = NumberInput.text(rule.kilometerInterval, style: .kilometers)
+            monthInterval = NumberInput.text(rule.monthInterval.map { Decimal($0) }, style: .months)
         }
 
         var parsedKilometerInterval: Double? {
-            guard let value = NumberInput.double(kilometerInterval), value > 0 else { return nil }
+            guard let value = NumberInput.double(kilometerInterval, style: .kilometers), value > 0 else { return nil }
             return value
         }
 
         var parsedMonthInterval: Int? {
-            guard let value = NumberInput.double(monthInterval), value > 0 else { return nil }
+            guard let value = NumberInput.double(monthInterval, style: .months), value > 0 else { return nil }
             return Int(value)
         }
 
@@ -82,8 +82,8 @@ final class VehicleFormViewModel {
             name = vehicle.name
             kind = vehicle.kind
             plate = vehicle.plate ?? ""
-            initialOdometer = NumberInput.text(vehicle.initialOdometer)
-            tankCapacity = NumberInput.text(vehicle.tankCapacity)
+            initialOdometer = NumberInput.text(vehicle.initialOdometer, style: .kilometers)
+            tankCapacity = NumberInput.text(vehicle.tankCapacity, style: .liters)
         }
 
         rules = existingRules
@@ -98,8 +98,8 @@ final class VehicleFormViewModel {
         return trimmed.isEmpty ? nil : trimmed.uppercased()
     }
 
-    var parsedInitialOdometer: Double { NumberInput.double(initialOdometer) ?? 0 }
-    var parsedTankCapacity: Double? { NumberInput.double(tankCapacity) }
+    var parsedInitialOdometer: Double { NumberInput.double(initialOdometer, style: .kilometers) ?? 0 }
+    var parsedTankCapacity: Double? { NumberInput.double(tankCapacity, style: .liters) }
 
     var issues: [ValidationIssue] {
         var issues: [ValidationIssue] = []
