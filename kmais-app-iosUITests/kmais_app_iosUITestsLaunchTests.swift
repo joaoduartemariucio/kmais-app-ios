@@ -10,7 +10,7 @@ final class kmais_app_iosUITestsLaunchTests: XCTestCase {
     }
 
     @MainActor
-    func testLaunch() throws {
+    func testLaunch() {
         let app = XCUIApplication()
         app.launch()
 

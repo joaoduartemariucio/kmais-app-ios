@@ -15,7 +15,7 @@ nonisolated enum NumberInput {
         var fractionDigits: Int {
             switch self {
             case .integer: 0
-            case .decimal(let digits), .currency(let digits): digits
+            case let .currency(digits), let .decimal(digits): digits
             }
         }
     }
@@ -51,7 +51,7 @@ nonisolated enum NumberInput {
         let precision = NumberFormatStyleConfiguration.Precision.fractionLength(style.fractionDigits)
 
         switch style {
-        case .integer, .decimal:
+        case .decimal, .integer:
             return value.formatted(.number.precision(precision))
         case .currency:
             return value.formatted(

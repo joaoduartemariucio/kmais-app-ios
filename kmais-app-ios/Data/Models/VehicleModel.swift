@@ -39,9 +39,9 @@ final class VehicleModel {
         self.tankCapacity = tankCapacity
         self.createdAt = createdAt
         self.isArchived = isArchived
-        self.fuelEntries = []
-        self.serviceEntries = []
-        self.serviceRules = []
+        fuelEntries = []
+        serviceEntries = []
+        serviceRules = []
     }
 }
 

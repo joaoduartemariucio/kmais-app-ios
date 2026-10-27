@@ -131,6 +131,7 @@ Design decisions are written down instead of commented in code:
 
 - [Architecture](docs/architecture.md) — layers, data flow, lint rules and how to add a feature
 - [Decisions](docs/decisions.md) — what was chosen, why, and what it costs
+- [CI](docs/ci.md) — lint, format, build, test and coverage rules
 
 ## Testing
 
@@ -139,23 +140,38 @@ Tests use **Swift Testing**:
 - `Calculations/` — consumption, anomalies, cost, odometer and maintenance forecast with fixtures.
 - `ViewModels/` — ViewModels tested against in-memory fake repositories, no SwiftData involved.
 
-CI (GitHub Actions) runs `swiftlint lint --strict` and the unit tests on every push and pull request.
+## CI
+
+Every push and pull request must pass, on GitHub Actions:
+
+| Check | Tool | Rule |
+|---|---|---|
+| **Lint** | SwiftLint `--strict` | zero violations, including the layer-boundary rules |
+| **Format** | SwiftFormat `--lint` | code matches the community-default style in [`.swiftformat`](.swiftformat) |
+| **Build** | `xcodebuild build-for-testing` | app and tests compile |
+| **Test** | `xcodebuild test-without-building` | every unit test passes |
+| **Coverage** | [`scripts/diff_coverage.py`](scripts/diff_coverage.py) + `xccov` | **≥ 80% of the changed executable lines** are covered |
+
+The coverage gate applies to **new code**: lines added or modified by the change, excluding
+pure SwiftUI layout and app wiring. Details, every rule and how to run each check locally are in
+[docs/ci.md](docs/ci.md).
 
 ## Getting started
 
-Requirements: Xcode with the iOS 26.5 SDK, and [SwiftLint](https://github.com/realm/SwiftLint) (optional locally, required in CI).
+Requirements: Xcode with the iOS 26.5 SDK, [SwiftLint](https://github.com/realm/SwiftLint) and
+[SwiftFormat](https://github.com/nicklockwood/SwiftFormat).
 
 ```bash
 git clone https://github.com/joaoduartemariucio/kmais-app-ios.git
 cd kmais-app-ios
-brew install swiftlint
+brew install swiftlint swiftformat
 open kmais-app-ios.xcodeproj
 ```
 
-Run the tests from the command line:
+Run the same checks as CI before pushing:
 
 ```bash
-xcodebuild test -project kmais-app-ios.xcodeproj -scheme kmais-app-ios -destination 'platform=iOS Simulator,name=iPhone 16 Pro' -only-testing:kmais-app-iosTests
+make ci
 ```
 
 ## Roadmap

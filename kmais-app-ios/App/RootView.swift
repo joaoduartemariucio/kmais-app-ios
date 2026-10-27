@@ -8,7 +8,7 @@ struct RootView: View {
             VehicleListView(scope: .active)
                 .navigationDestination(for: AppRoute.self) { route in
                     switch route {
-                    case .vehicleDetail(let vehicle):
+                    case let .vehicleDetail(vehicle):
                         VehicleDetailView(vehicle: vehicle)
                     case .archivedVehicles:
                         VehicleListView(scope: .archived)

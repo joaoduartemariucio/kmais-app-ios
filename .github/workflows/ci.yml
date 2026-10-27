@@ -4,28 +4,60 @@ on:
   push:
   pull_request:
 
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  lint-and-test:
-    runs-on: macos-15
+  static-checks:
+    name: Lint and format
+    runs-on: macos-26
     steps:
       - uses: actions/checkout@v4
 
-      # Ao contrário da fase de build local, aqui a ausência do SwiftLint é
-      # falha: lint que só roda na máquina de quem escreveu não é fronteira.
-      - name: Install SwiftLint
-        run: |
-          brew install swiftlint
-          swiftlint version
+      - name: Install SwiftLint and SwiftFormat
+        run: brew install swiftlint swiftformat
 
       - name: Lint
-        run: swiftlint lint --strict --config .swiftlint.yml
+        run: make lint
 
-      - name: Domain calculations tests
+      - name: Format check
+        run: make format-check
+
+  build-and-test:
+    name: Build, test and coverage
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+
+      - name: Install SwiftLint
+        run: brew install swiftlint
+
+      - name: Build
+        run: make build XCBEAUTIFY_FLAGS="--renderer github-actions"
+
+      - name: Test
+        run: make test XCBEAUTIFY_FLAGS="--renderer github-actions"
+
+      - name: Coverage of changed lines
+        env:
+          BASE: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before }}
         run: |
-          xcodebuild test \
-            -project kmais-app-ios.xcodeproj \
-            -scheme kmais-app-ios \
-            -destination 'platform=iOS Simulator,OS=latest,name=iPhone 16 Pro' \
-            -only-testing:kmais-app-iosTests \
-            CODE_SIGNING_ALLOWED=NO \
-            | xcbeautify --renderer github-actions || exit ${PIPESTATUS[0]}
+          if [ -z "$BASE" ] || ! git cat-file -e "$BASE^{commit}" 2>/dev/null; then
+            BASE=origin/main
+          fi
+          make coverage BASE="$BASE"
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: TestResults.xcresult
+          path: .build/TestResults.xcresult
+          if-no-files-found: ignore

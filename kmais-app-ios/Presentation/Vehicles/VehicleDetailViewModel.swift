@@ -70,7 +70,7 @@ final class VehicleDetailViewModel {
     }
 
     var rules: [ServiceRule] {
-        if case .loaded(let content) = state { content.rules } else { [] }
+        if case let .loaded(content) = state { content.rules } else { [] }
     }
 
     func odometerReadings(excluding item: VehicleTimeline.Item? = nil) -> [OdometerSample] {
@@ -84,9 +84,9 @@ final class VehicleDetailViewModel {
     func delete(_ item: VehicleTimeline.Item) async {
         do {
             switch item {
-            case .fuel(let entry):
+            case let .fuel(entry):
                 try await fuelEntryRepository.delete(id: entry.id)
-            case .service(let entry):
+            case let .service(entry):
                 try await serviceRepository.deleteEntry(id: entry.id)
             }
             await load()

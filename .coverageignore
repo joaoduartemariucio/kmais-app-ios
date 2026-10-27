@@ -1,0 +1,20 @@
+# Files left out of the changed-lines coverage check (fnmatch globs, relative to the repo root).
+# Rule of thumb: only code without logic of its own — SwiftUI layout and app wiring.
+# ViewModels, Domain and Data always count.
+
+# Composition root and entry point
+kmais-app-ios/App/*
+
+# SwiftUI views, rows and cards
+kmais-app-ios/Presentation/*/*View.swift
+kmais-app-ios/Presentation/*/*Row.swift
+kmais-app-ios/Presentation/*/*Card.swift
+kmais-app-ios/Presentation/Common/FormSaveToolbar.swift
+kmais-app-ios/Presentation/Common/LabeledNumberField.swift
+kmais-app-ios/Presentation/Common/ValidationFooter.swift
+
+# UIKit glue for keyboard dismissal
+kmais-app-ios/Presentation/Common/KeyboardDismissal.swift
+
+# Fixtures for SwiftUI previews
+kmais-app-ios/Data/PreviewData.swift

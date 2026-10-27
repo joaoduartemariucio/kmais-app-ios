@@ -3,21 +3,18 @@ import XCTest
 final class kmais_app_iosUITests: XCTestCase {
     override func setUpWithError() throws {
         continueAfterFailure = false
-
     }
 
-    override func tearDownWithError() throws {
-    }
+    override func tearDownWithError() throws {}
 
     @MainActor
-    func testExample() throws {
+    func testExample() {
         let app = XCUIApplication()
         app.launch()
-
     }
 
     @MainActor
-    func testLaunchPerformance() throws {
+    func testLaunchPerformance() {
         measure(metrics: [XCTApplicationLaunchMetric()]) {
             XCUIApplication().launch()
         }

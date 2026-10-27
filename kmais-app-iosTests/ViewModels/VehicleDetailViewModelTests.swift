@@ -62,7 +62,7 @@ struct VehicleDetailViewModelTests {
 
         await viewModel.load()
 
-        guard case .loaded(let content) = viewModel.state else {
+        guard case let .loaded(content) = viewModel.state else {
             Issue.record("expected .loaded, got \(viewModel.state)")
             return
         }
@@ -79,7 +79,7 @@ struct VehicleDetailViewModelTests {
 
         await viewModel.load()
 
-        guard case .loaded(let content) = viewModel.state else {
+        guard case let .loaded(content) = viewModel.state else {
             Issue.record("expected .loaded, got \(viewModel.state)")
             return
         }
@@ -106,12 +106,34 @@ struct VehicleDetailViewModelTests {
 
         await viewModel.load()
 
-        guard case .loaded(let content) = viewModel.state else {
+        guard case let .loaded(content) = viewModel.state else {
             Issue.record("expected .loaded, got \(viewModel.state)")
             return
         }
         #expect(content.sections.count == 2)
         #expect(content.sections[0].month > content.sections[1].month)
+    }
+
+    @Test("rules are exposed once loaded and empty before")
+    func exposesRules() async {
+        let rule = ServiceRule(vehicleID: Self.vehicle.id, kind: .oilChange, kilometerInterval: 10_000)
+        let viewModel = makeViewModel(rules: [rule])
+        #expect(viewModel.rules.isEmpty)
+
+        await viewModel.load()
+
+        #expect(viewModel.rules == [rule])
+    }
+
+    @Test("timeline items expose the odometer of fuel and service entries")
+    func timelineItemOdometer() {
+        let fuelItem = VehicleTimeline.Item.fuel(Self.fuel(1, 1_000))
+        let serviceItem = VehicleTimeline.Item.service(
+            ServiceEntry(vehicleID: Self.vehicle.id, date: day(2), odometer: 1_100, cost: 50)
+        )
+
+        #expect(fuelItem.odometer == 1_000)
+        #expect(serviceItem.odometer == 1_100)
     }
 
     @Test("odometer readings excluding an entry ignore that entry")
@@ -132,7 +154,7 @@ struct VehicleDetailViewModelTests {
 
         await viewModel.delete(.fuel(doomed))
 
-        guard case .loaded(let content) = viewModel.state else {
+        guard case let .loaded(content) = viewModel.state else {
             Issue.record("expected .loaded, got \(viewModel.state)")
             return
         }

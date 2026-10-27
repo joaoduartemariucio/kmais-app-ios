@@ -27,9 +27,9 @@ enum ValidationIssue: Hashable, Identifiable {
             "Give the vehicle a name."
         case .odometerRequired:
             "Enter the odometer reading."
-        case .odometerNotAfterPrevious(let previous):
+        case let .odometerNotAfterPrevious(previous):
             "The previous record has \(previous.formattedKilometers()). Saving this changes the vehicle's history."
-        case .odometerNotBeforeNext(let next):
+        case let .odometerNotBeforeNext(next):
             "The next record has \(next.formattedKilometers()). Saving this changes the vehicle's history."
         case .litersRequired:
             "Enter how many liters you filled."

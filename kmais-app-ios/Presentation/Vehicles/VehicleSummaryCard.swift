@@ -9,12 +9,12 @@ struct VehicleSummaryCard: View {
 
             metric(
                 "Average consumption",
-                value: stats.averageConsumption.map { $0.formattedConsumption }
+                value: stats.averageConsumption.map(\.formattedConsumption)
             )
 
             metric(
                 "Cost per kilometer",
-                value: stats.cost.costPerKilometer.map { $0.formattedCurrency }
+                value: stats.cost.costPerKilometer.map(\.formattedCurrency)
             )
 
             metric("Total spent", value: stats.cost.totalCost.formattedCurrency)
@@ -32,7 +32,6 @@ struct VehicleSummaryCard: View {
         .padding(.vertical, 4)
     }
 
-    @ViewBuilder
     private func metric(
         _ title: LocalizedStringResource,
         value: String?,

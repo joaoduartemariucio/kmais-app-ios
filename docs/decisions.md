@@ -44,6 +44,27 @@ the keyboard (the number pad has no return key) and a window-level tap recognize
   touches, so buttons and toggles keep working.
 - **Cost:** once installed, the recognizer stays on the window for the whole app.
 
+## Quality gates
+
+### Coverage is checked on changed lines, not on the whole project
+
+CI requires 80% of the executable lines added or modified by a change to run in tests
+(see [CI](ci.md#coverage-of-changed-lines)). SwiftUI views and app wiring are left out via
+`.coverageignore`.
+
+- **Why:** a global threshold either blocks everything from day one or is set so low it
+  means nothing. Checking new code raises coverage with every change and puts the cost on
+  whoever writes the code, while it is still fresh.
+- **Cost:** old untested code only gets tests when someone touches it — refactors and even
+  reformatting pull those lines into the check. The ignore list needs judgment: a view that
+  grows real logic should move it to its ViewModel rather than stay excluded.
+
+### SwiftFormat with community defaults
+
+The formatter runs on defaults, with options pinned only where defaults are ambiguous or
+clash with SwiftLint ([CI](ci.md#format--swiftformat)). Formatting is checked, never
+discussed in review.
+
 ## Architecture
 
 ### Layers as folders in one target, guarded by lint

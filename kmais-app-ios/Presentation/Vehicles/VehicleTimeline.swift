@@ -7,22 +7,22 @@ enum VehicleTimeline {
 
         var id: UUID {
             switch self {
-            case .fuel(let entry): entry.id
-            case .service(let entry): entry.id
+            case let .fuel(entry): entry.id
+            case let .service(entry): entry.id
             }
         }
 
         var date: Date {
             switch self {
-            case .fuel(let entry): entry.date
-            case .service(let entry): entry.date
+            case let .fuel(entry): entry.date
+            case let .service(entry): entry.date
             }
         }
 
         var odometer: Double {
             switch self {
-            case .fuel(let entry): entry.odometer
-            case .service(let entry): entry.odometer
+            case let .fuel(entry): entry.odometer
+            case let .service(entry): entry.odometer
             }
         }
     }

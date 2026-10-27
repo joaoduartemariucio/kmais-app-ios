@@ -15,7 +15,7 @@ struct LabeledNumberField: View {
         self.title = title
         self.unit = unit
         self.style = style
-        self._text = text
+        _text = text
     }
 
     var body: some View {

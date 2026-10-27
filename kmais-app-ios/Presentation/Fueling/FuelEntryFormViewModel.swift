@@ -37,7 +37,7 @@ final class FuelEntryFormViewModel {
             liters = ""
             pricePerLiter = ""
             isFullTank = true
-        case .edit(let entry):
+        case let .edit(entry):
             date = entry.date
             odometer = NumberInput.text(entry.odometer, style: .kilometers)
             liters = NumberInput.text(entry.liters, style: .liters)
@@ -93,7 +93,7 @@ final class FuelEntryFormViewModel {
 
     private func entry(odometer: Double, liters: Double, price: Decimal) -> FuelEntry {
         switch mode {
-        case .create(let vehicleID):
+        case let .create(vehicleID):
             FuelEntry(
                 vehicleID: vehicleID,
                 date: date,
@@ -102,7 +102,7 @@ final class FuelEntryFormViewModel {
                 pricePerLiter: price,
                 isFullTank: isFullTank
             )
-        case .edit(let existing):
+        case let .edit(existing):
             FuelEntry(
                 id: existing.id,
                 vehicleID: existing.vehicleID,

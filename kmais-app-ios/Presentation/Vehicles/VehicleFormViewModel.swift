@@ -78,7 +78,7 @@ final class VehicleFormViewModel {
             plate = ""
             initialOdometer = ""
             tankCapacity = ""
-        case .edit(let vehicle):
+        case let .edit(vehicle):
             name = vehicle.name
             kind = vehicle.kind
             plate = vehicle.plate ?? ""
@@ -124,7 +124,7 @@ final class VehicleFormViewModel {
         guard !issues.blocksSaving else { return }
 
         state = .saving
-        let vehicle = self.vehicle()
+        let vehicle = vehicle()
         do {
             try await vehicleRepository.save(vehicle)
             try await serviceRepository.save(
@@ -156,7 +156,7 @@ final class VehicleFormViewModel {
                 tankCapacity: parsedTankCapacity,
                 createdAt: dateProvider.now
             )
-        case .edit(let existing):
+        case let .edit(existing):
             Vehicle(
                 id: existing.id,
                 name: trimmedName,

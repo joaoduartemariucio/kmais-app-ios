@@ -26,7 +26,7 @@ struct AppDependencies {
 
     static func live() -> AppDependencies {
         do {
-            return AppDependencies(modelContainer: try KmaisSchema.container())
+            return try AppDependencies(modelContainer: KmaisSchema.container())
         } catch {
             let logger = Logger(
                 subsystem: Bundle.main.bundleIdentifier ?? "br.com.joaoduartemariucio.kmais-app-ios",
@@ -39,8 +39,8 @@ struct AppDependencies {
 
     static func inMemory(isUsingFallbackStore: Bool = false) -> AppDependencies {
         do {
-            return AppDependencies(
-                modelContainer: try KmaisSchema.container(inMemory: true),
+            return try AppDependencies(
+                modelContainer: KmaisSchema.container(inMemory: true),
                 isUsingFallbackStore: isUsingFallbackStore
             )
         } catch {

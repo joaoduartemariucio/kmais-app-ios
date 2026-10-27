@@ -26,17 +26,31 @@ struct VehicleListViewModelTests {
     }
 
     @Test("loads vehicles with their stats")
-    func loadsSuccessfully() async throws {
+    func loadsSuccessfully() async {
         let vehicle = makeVehicle(name: "Gol")
         let fuel = [
-            FuelEntry(vehicleID: vehicle.id, date: day(0), odometer: 1_000, liters: 40, pricePerLiter: 5, isFullTank: true),
-            FuelEntry(vehicleID: vehicle.id, date: day(10), odometer: 1_400, liters: 40, pricePerLiter: 5, isFullTank: true)
+            FuelEntry(
+                vehicleID: vehicle.id,
+                date: day(0),
+                odometer: 1_000,
+                liters: 40,
+                pricePerLiter: 5,
+                isFullTank: true
+            ),
+            FuelEntry(
+                vehicleID: vehicle.id,
+                date: day(10),
+                odometer: 1_400,
+                liters: 40,
+                pricePerLiter: 5,
+                isFullTank: true
+            )
         ]
         let viewModel = makeViewModel(vehicles: [vehicle], fuel: fuel)
 
         await viewModel.load()
 
-        guard case .loaded(let rows) = viewModel.state else {
+        guard case let .loaded(rows) = viewModel.state else {
             Issue.record("expected .loaded, got \(viewModel.state)")
             return
         }
@@ -52,7 +66,7 @@ struct VehicleListViewModelTests {
 
         await viewModel.load()
 
-        guard case .loaded(let rows) = viewModel.state else {
+        guard case let .loaded(rows) = viewModel.state else {
             Issue.record("expected .loaded, got \(viewModel.state)")
             return
         }
@@ -79,7 +93,7 @@ struct VehicleListViewModelTests {
 
         await viewModel.load()
 
-        guard case .loaded(let rows) = viewModel.state else {
+        guard case let .loaded(rows) = viewModel.state else {
             Issue.record("expected .loaded, got \(viewModel.state)")
             return
         }
@@ -95,7 +109,7 @@ struct VehicleListViewModelTests {
 
         await viewModel.load()
 
-        guard case .loaded(let rows) = viewModel.state else {
+        guard case let .loaded(rows) = viewModel.state else {
             Issue.record("expected .loaded, got \(viewModel.state)")
             return
         }
@@ -110,7 +124,7 @@ struct VehicleListViewModelTests {
 
         await viewModel.setArchived(true, on: vehicle)
 
-        guard case .loaded(let rows) = viewModel.state else {
+        guard case let .loaded(rows) = viewModel.state else {
             Issue.record("expected .loaded, got \(viewModel.state)")
             return
         }

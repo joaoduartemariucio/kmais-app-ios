@@ -88,7 +88,7 @@ struct VehicleFormView: View {
                 Button("Add reminder", systemImage: "plus") { viewModel.addRule() }
             }
 
-            if case .failed(let message) = viewModel.state {
+            if case let .failed(message) = viewModel.state {
                 Section {
                     Label(message, systemImage: "exclamationmark.triangle.fill")
                         .foregroundStyle(.red)

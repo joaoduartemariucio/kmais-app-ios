@@ -18,8 +18,8 @@ struct VehicleDetailView: View {
             switch self {
             case .newFuel: "newFuel"
             case .newService: "newService"
-            case .editFuel(let entry): "fuel-\(entry.id)"
-            case .editService(let entry): "service-\(entry.id)"
+            case let .editFuel(entry): "fuel-\(entry.id)"
+            case let .editService(entry): "service-\(entry.id)"
             case .editVehicle: "vehicle"
             }
         }
@@ -77,7 +77,7 @@ struct VehicleDetailView: View {
                 otherReadings: viewModel?.odometerReadings() ?? [],
                 onSaved: reload
             )
-        case .editFuel(let entry):
+        case let .editFuel(entry):
             FuelEntryFormView(
                 mode: .edit(entry),
                 otherReadings: viewModel?.odometerReadings(excluding: .fuel(entry)) ?? [],
@@ -89,13 +89,13 @@ struct VehicleDetailView: View {
                 otherReadings: viewModel?.odometerReadings() ?? [],
                 onSaved: reload
             )
-        case .editService(let entry):
+        case let .editService(entry):
             ServiceEntryFormView(
                 mode: .edit(entry),
                 otherReadings: viewModel?.odometerReadings(excluding: .service(entry)) ?? [],
                 onSaved: reload
             )
-        case .editVehicle(let rules):
+        case let .editVehicle(rules):
             VehicleFormView(mode: .edit(vehicle), existingRules: rules, onSaved: reload)
         }
     }
@@ -105,13 +105,13 @@ struct VehicleDetailView: View {
         switch viewModel.state {
         case .loading:
             ProgressView()
-        case .failed(let message):
+        case let .failed(message):
             EmptyStateView(
                 title: "Could not load this vehicle",
                 systemImage: "exclamationmark.triangle",
                 message: LocalizedStringKey(message)
             )
-        case .loaded(let content):
+        case let .loaded(content):
             List {
                 Section("Summary") {
                     VehicleSummaryCard(stats: content.stats)
@@ -138,16 +138,15 @@ struct VehicleDetailView: View {
         }
     }
 
-    @ViewBuilder
     private func row(
         for item: VehicleTimeline.Item,
         viewModel: VehicleDetailViewModel
     ) -> some View {
         Group {
             switch item {
-            case .fuel(let entry):
+            case let .fuel(entry):
                 Button { sheet = .editFuel(entry) } label: { FuelEntryRow(entry: entry) }
-            case .service(let entry):
+            case let .service(entry):
                 Button { sheet = .editService(entry) } label: { ServiceEntryRow(entry: entry) }
             }
         }

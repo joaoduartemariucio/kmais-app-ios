@@ -93,3 +93,6 @@ xcshareddata/
 
 # Artefatos do SwiftPM local
 /Packages/*/.swiftpm
+
+# Local CI output (make build/test/coverage)
+.build/

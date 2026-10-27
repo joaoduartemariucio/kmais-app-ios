@@ -76,7 +76,7 @@ struct ServiceEntryFormView: View {
                     .lineLimit(3...6)
             }
 
-            if case .failed(let message) = viewModel.state {
+            if case let .failed(message) = viewModel.state {
                 Section {
                     Label(message, systemImage: "exclamationmark.triangle.fill")
                         .foregroundStyle(.red)

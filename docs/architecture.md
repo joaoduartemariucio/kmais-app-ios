@@ -100,9 +100,8 @@ mapper, commits → sheet dismisses → parent ViewModel reloads.
 The Domain rules are exact (they match real imports). The Presentation rule matches
 names, so **a new `@Model` must be added to its list**.
 
-Locally the lint build phase only warns if SwiftLint is missing. CI
-(`.github/workflows/ci.yml`) installs it, runs `swiftlint lint --strict` and the unit tests
-on every push and pull request.
+Locally the lint build phase only warns if SwiftLint is missing; CI always runs it, along
+with the format check, build, tests and the coverage gate. See [CI](ci.md).
 
 ## Tests
 

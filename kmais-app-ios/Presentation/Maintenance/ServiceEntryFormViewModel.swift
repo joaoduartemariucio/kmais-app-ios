@@ -37,7 +37,7 @@ final class ServiceEntryFormViewModel {
             odometer = ""
             cost = ""
             notes = ""
-        case .edit(let entry):
+        case let .edit(entry):
             kind = entry.kind
             date = entry.date
             odometer = NumberInput.text(entry.odometer, style: .kilometers)
@@ -78,7 +78,7 @@ final class ServiceEntryFormViewModel {
         let trimmedNotes = notes.trimmingCharacters(in: .whitespacesAndNewlines)
 
         switch mode {
-        case .create(let vehicleID):
+        case let .create(vehicleID):
             return ServiceEntry(
                 vehicleID: vehicleID,
                 kind: kind,
@@ -87,7 +87,7 @@ final class ServiceEntryFormViewModel {
                 cost: parsedCost,
                 notes: trimmedNotes
             )
-        case .edit(let existing):
+        case let .edit(existing):
             return ServiceEntry(
                 id: existing.id,
                 vehicleID: existing.vehicleID,

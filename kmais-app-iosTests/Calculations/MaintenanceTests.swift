@@ -91,7 +91,7 @@ struct MaintenanceTests {
         #expect(forecast.trigger == .distance)
         #expect(forecast.dueDate == day(200))
         #expect(forecast.dueOdometer == 20_000)
-        #expect(abs(try #require(forecast.averageKilometersPerMonth) - Self.kilometersPerMonth) < 1e-9)
+        #expect(try abs(#require(forecast.averageKilometersPerMonth) - Self.kilometersPerMonth) < 1e-9)
     }
 
     @Test("months come due before the distance")
@@ -324,4 +324,3 @@ struct NextServiceDueTests {
         #expect(due.rule.kind == .brakes)
     }
 }
-

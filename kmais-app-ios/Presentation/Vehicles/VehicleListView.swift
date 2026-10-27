@@ -14,7 +14,7 @@ struct VehicleListView: View {
         var id: String {
             switch self {
             case .create: "create"
-            case .edit(let vehicle): vehicle.id.uuidString
+            case let .edit(vehicle): vehicle.id.uuidString
             }
         }
     }
@@ -44,7 +44,7 @@ struct VehicleListView: View {
             switch sheet {
             case .create:
                 VehicleFormView(mode: .create) { Task { await viewModel?.load() } }
-            case .edit(let vehicle):
+            case let .edit(vehicle):
                 VehicleFormView(mode: .edit(vehicle)) { Task { await viewModel?.load() } }
             }
         }
@@ -66,13 +66,13 @@ struct VehicleListView: View {
         switch viewModel.state {
         case .loading:
             ProgressView()
-        case .failed(let message):
+        case let .failed(message):
             EmptyStateView(
                 title: "Could not load vehicles",
                 systemImage: "exclamationmark.triangle",
                 message: LocalizedStringKey(message)
             )
-        case .loaded(let rows):
+        case let .loaded(rows):
             if rows.isEmpty {
                 emptyState
             } else {
