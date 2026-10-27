@@ -13,11 +13,15 @@ final class VehicleDetailViewModel {
     struct Content {
         let stats: VehicleStats
         let sections: [VehicleTimeline.MonthSection]
+        let spending: [VehicleTimeline.MonthSpending]
         let rules: [ServiceRule]
     }
 
+    static let spendingMonths = 6
+
     let vehicle: Vehicle
     private(set) var state: State = .loading
+    var filter: VehicleTimeline.Filter = .all
 
     private let fuelEntryRepository: FuelEntryRepository
     private let serviceRepository: ServiceRepository
@@ -50,6 +54,10 @@ final class VehicleDetailViewModel {
             self.fuel = fuel
             self.services = services
 
+            let calendar = dateProvider.calendar
+            let now = dateProvider.now
+            let sections = VehicleTimeline.sections(fuel: fuel, services: services, calendar: calendar)
+
             state = .loaded(
                 Content(
                     stats: VehicleStats(
@@ -57,12 +65,15 @@ final class VehicleDetailViewModel {
                         fuel: fuel,
                         services: services,
                         rules: rules,
-                        calendar: dateProvider.calendar
+                        now: now,
+                        calendar: calendar
                     ),
-                    sections: VehicleTimeline.sections(
-                        fuel: fuel,
-                        services: services,
-                        calendar: dateProvider.calendar
+                    sections: sections,
+                    spending: VehicleTimeline.spending(
+                        sections,
+                        months: Self.spendingMonths,
+                        endingAt: now,
+                        calendar: calendar
                     ),
                     rules: rules
                 )
@@ -71,6 +82,19 @@ final class VehicleDetailViewModel {
             state = .failed(message: error.localizedDescription)
         }
         await reminders?.sync()
+    }
+
+    var visibleSections: [VehicleTimeline.MonthSection] {
+        guard case let .loaded(content) = state else { return [] }
+        return content.sections.compactMap { $0.filtered(by: filter) }
+    }
+
+    var hasHistory: Bool {
+        if case let .loaded(content) = state { !content.sections.isEmpty } else { false }
+    }
+
+    var lastPricePerLiter: Decimal? {
+        if case let .loaded(content) = state { content.stats.lastPricePerLiter } else { nil }
     }
 
     var rules: [ServiceRule] {

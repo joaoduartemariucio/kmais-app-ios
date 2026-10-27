@@ -60,19 +60,21 @@ struct ServiceEntryFormView: View {
         @Bindable var viewModel = viewModel
 
         Form {
+            Section("Service type") {
+                ServiceKindGridView(selection: $viewModel.kind)
+                    .listRowInsets(EdgeInsets(top: 12, leading: 12, bottom: 12, trailing: 12))
+            }
+
             Section {
-                Picker("Service type", selection: $viewModel.kind) {
-                    ForEach(ServiceKind.allCases, id: \.self) { kind in
-                        Text(kind.label).tag(kind)
-                    }
-                }
                 DatePicker("Date", selection: $viewModel.date, displayedComponents: .date)
                 LabeledNumberField("Odometer", unit: "km", style: .kilometers, text: $viewModel.odometer)
                 LabeledNumberField("Cost", style: .money, text: $viewModel.cost)
+            } footer: {
+                OdometerHintView(previous: viewModel.previousReading)
             }
 
             Section("Notes") {
-                TextField("Notes", text: $viewModel.notes, axis: .vertical)
+                TextField("Parts, shop, warranty…", text: $viewModel.notes, axis: .vertical)
                     .lineLimit(3...6)
             }
 
@@ -83,8 +85,10 @@ struct ServiceEntryFormView: View {
                 }
             }
 
-            Section {
-                ValidationFooter(issues: viewModel.issues)
+            if !viewModel.issues.isEmpty {
+                Section {
+                    ValidationFooter(issues: viewModel.issues)
+                }
             }
         }
         .dismissesKeyboard()

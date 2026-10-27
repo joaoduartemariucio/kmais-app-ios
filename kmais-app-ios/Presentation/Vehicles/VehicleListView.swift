@@ -55,6 +55,7 @@ struct VehicleListView: View {
                     vehicleRepository: dependencies.vehicleRepository,
                     fuelEntryRepository: dependencies.fuelEntryRepository,
                     serviceRepository: dependencies.serviceRepository,
+                    dateProvider: dependencies.dateProvider,
                     reminders: dependencies.reminderSync
                 )
             }
@@ -77,39 +78,74 @@ struct VehicleListView: View {
             if rows.isEmpty {
                 emptyState
             } else {
-                List(rows) { row in
-                    NavigationLink(value: AppRoute.vehicleDetail(row.vehicle)) {
-                        VehicleCard(row: row)
-                    }
-                    .swipeActions(edge: .trailing) {
-                        if scope == .active {
-                            Button("Archive", systemImage: "archivebox") {
-                                Task { await viewModel.setArchived(true, on: row.vehicle) }
-                            }
-                            .tint(.orange)
-                        } else {
-                            Button("Unarchive", systemImage: "arrow.uturn.backward") {
-                                Task { await viewModel.setArchived(false, on: row.vehicle) }
-                            }
-                            .tint(.blue)
+                List {
+                    if scope == .active, let overview = viewModel.overview {
+                        Section {
+                            GarageOverviewCard(overview: overview)
                         }
                     }
-                    .swipeActions(edge: .leading) {
-                        Button("Edit", systemImage: "pencil") { sheet = .edit(row.vehicle) }
+
+                    Section {
+                        ForEach(rows) { row in
+                            vehicleRow(row, viewModel: viewModel)
+                        }
                     }
+                    .listSectionSpacing(.compact)
                 }
+                .refreshable { await viewModel.load() }
             }
         }
     }
 
+    private func vehicleRow(_ row: VehicleListViewModel.Row, viewModel: VehicleListViewModel) -> some View {
+        NavigationLink(value: AppRoute.vehicleDetail(row.vehicle)) {
+            VehicleCard(row: row)
+        }
+        .swipeActions(edge: .trailing) {
+            archiveButton(for: row.vehicle, viewModel: viewModel)
+        }
+        .swipeActions(edge: .leading) {
+            Button("Edit", systemImage: "pencil") { sheet = .edit(row.vehicle) }
+        }
+        .contextMenu {
+            Button("Edit", systemImage: "pencil") { sheet = .edit(row.vehicle) }
+            archiveButton(for: row.vehicle, viewModel: viewModel)
+        }
+    }
+
+    @ViewBuilder
+    private func archiveButton(for vehicle: Vehicle, viewModel: VehicleListViewModel) -> some View {
+        if scope == .active {
+            Button("Archive", systemImage: "archivebox") {
+                Task { await viewModel.setArchived(true, on: vehicle) }
+            }
+            .tint(.orange)
+        } else {
+            Button("Unarchive", systemImage: "arrow.uturn.backward") {
+                Task { await viewModel.setArchived(false, on: vehicle) }
+            }
+            .tint(.blue)
+        }
+    }
+
     private var emptyState: some View {
-        EmptyStateView(
-            title: scope == .active ? "No vehicles yet" : "Nothing archived",
-            systemImage: scope == .active ? "car" : "archivebox",
-            message: scope == .active
-                ? "Add your car or motorcycle to start tracking fuel and services."
-                : "Vehicles you archive show up here."
-        )
+        ContentUnavailableView {
+            Label(
+                scope == .active ? "No vehicles yet" : "Nothing archived",
+                systemImage: scope == .active ? "car" : "archivebox"
+            )
+        } description: {
+            Text(
+                scope == .active
+                    ? "Add your car or motorcycle to start tracking fuel and services."
+                    : "Vehicles you archive show up here."
+            )
+        } actions: {
+            if scope == .active {
+                Button("Add vehicle", systemImage: "plus") { sheet = .create }
+                    .buttonStyle(.borderedProminent)
+            }
+        }
     }
 }
 

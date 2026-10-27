@@ -48,6 +48,8 @@ final class ServiceEntryFormViewModel {
 
     var parsedOdometer: Double? { NumberInput.double(odometer, style: .kilometers) }
 
+    var previousReading: Double? { Odometer.neighbors(of: date, in: otherReadings).previous }
+
     var parsedCost: Decimal { NumberInput.decimal(cost, style: .money) ?? 0 }
 
     var issues: [ValidationIssue] {

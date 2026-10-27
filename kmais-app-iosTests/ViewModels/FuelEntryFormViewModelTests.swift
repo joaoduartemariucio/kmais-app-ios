@@ -8,13 +8,15 @@ struct FuelEntryFormViewModelTests {
     private func makeViewModel(
         mode: FuelEntryFormViewModel.Mode = .create(vehicleID: testVehicleID),
         repository: InMemoryFuelEntryRepository = InMemoryFuelEntryRepository(),
-        otherReadings: [OdometerSample] = []
+        otherReadings: [OdometerSample] = [],
+        suggestedPrice: Decimal? = nil
     ) -> FuelEntryFormViewModel {
         FuelEntryFormViewModel(
             mode: mode,
             repository: repository,
             dateProvider: FixedDateProvider(now: day(30)),
-            otherReadings: otherReadings
+            otherReadings: otherReadings,
+            suggestedPrice: suggestedPrice
         )
     }
 
@@ -130,5 +132,34 @@ struct FuelEntryFormViewModelTests {
             Issue.record("expected .failed, got \(viewModel.state)")
             return
         }
+    }
+
+    @Test("a new fuel-up starts with the suggested price; an edit keeps its own")
+    func suggestedPrice() {
+        let created = makeViewModel(suggestedPrice: Decimal(string: "5.899")!)
+        #expect(created.parsedPrice == Decimal(string: "5.899"))
+        #expect(created.isUsingSuggestedPrice)
+        created.pricePerLiter = NumberInput.text(Decimal(6), style: .fuelPrice)
+        #expect(!created.isUsingSuggestedPrice)
+
+        let entry = full(10, 1_000, 30, price: 6)
+        let edited = makeViewModel(mode: .edit(entry), suggestedPrice: 4)
+        #expect(edited.parsedPrice == 6)
+        #expect(!edited.isUsingSuggestedPrice)
+        #expect(!makeViewModel().isUsingSuggestedPrice)
+    }
+
+    @Test("the form shows the previous reading and the distance driven since")
+    func previousReading() {
+        let viewModel = makeViewModel(otherReadings: [sample(10, 1_000), sample(60, 2_000)])
+
+        #expect(viewModel.previousReading == 1_000)
+        #expect(viewModel.distanceSincePrevious == nil)
+
+        viewModel.odometer = NumberInput.text(1_350.0, style: .kilometers)
+        #expect(viewModel.distanceSincePrevious == 350)
+
+        viewModel.odometer = NumberInput.text(900.0, style: .kilometers)
+        #expect(viewModel.distanceSincePrevious == nil)
     }
 }

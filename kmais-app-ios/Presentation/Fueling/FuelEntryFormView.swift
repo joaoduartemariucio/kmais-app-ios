@@ -3,6 +3,7 @@ import SwiftUI
 struct FuelEntryFormView: View {
     let mode: FuelEntryFormViewModel.Mode
     let otherReadings: [OdometerSample]
+    var suggestedPrice: Decimal?
     let onSaved: () -> Void
 
     @Environment(\.dependencies) private var dependencies
@@ -37,7 +38,8 @@ struct FuelEntryFormView: View {
                     mode: mode,
                     repository: dependencies.fuelEntryRepository,
                     dateProvider: dependencies.dateProvider,
-                    otherReadings: otherReadings
+                    otherReadings: otherReadings,
+                    suggestedPrice: suggestedPrice
                 )
             }
         }
@@ -61,18 +63,33 @@ struct FuelEntryFormView: View {
 
         Form {
             Section {
-                DatePicker("Date", selection: $viewModel.date, displayedComponents: .date)
-                LabeledNumberField("Odometer", unit: "km", style: .kilometers, text: $viewModel.odometer)
-                LabeledNumberField("Liters", unit: "L", style: .liters, text: $viewModel.liters)
-                LabeledNumberField("Price per liter", style: .fuelPrice, text: $viewModel.pricePerLiter)
-                Toggle("Full tank", isOn: $viewModel.isFullTank)
+                totalHeader(viewModel.totalCost)
             }
 
             Section {
-                LabeledContent("Total") {
-                    Text(viewModel.totalCost?.formattedCurrency ?? String(localized: "Not enough data"))
-                        .foregroundStyle(viewModel.totalCost == nil ? .secondary : .primary)
+                LabeledNumberField("Liters", unit: "L", style: .liters, text: $viewModel.liters)
+                LabeledNumberField("Price per liter", style: .fuelPrice, text: $viewModel.pricePerLiter)
+                Toggle(isOn: $viewModel.isFullTank) {
+                    Label("Full tank", systemImage: "fuelpump.fill")
                 }
+            } header: {
+                Text("Fuel")
+            } footer: {
+                if viewModel.isUsingSuggestedPrice {
+                    Text("Price filled in from your last fuel-up.")
+                }
+            }
+
+            Section {
+                DatePicker("Date", selection: $viewModel.date, displayedComponents: .date)
+                LabeledNumberField("Odometer", unit: "km", style: .kilometers, text: $viewModel.odometer)
+            } header: {
+                Text("When")
+            } footer: {
+                OdometerHintView(
+                    previous: viewModel.previousReading,
+                    distance: viewModel.distanceSincePrevious
+                )
             }
 
             if case let .failed(message) = viewModel.state {
@@ -82,11 +99,32 @@ struct FuelEntryFormView: View {
                 }
             }
 
-            Section {
-                ValidationFooter(issues: viewModel.issues)
+            if !viewModel.issues.isEmpty {
+                Section {
+                    ValidationFooter(issues: viewModel.issues)
+                }
             }
         }
         .dismissesKeyboard()
+    }
+
+    private func totalHeader(_ total: Decimal?) -> some View {
+        VStack(spacing: 4) {
+            Text("Total")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+            Text(total?.formattedCurrency ?? "—")
+                .font(.system(size: 40, weight: .bold, design: .rounded))
+                .monospacedDigit()
+                .contentTransition(.numericText())
+                .foregroundStyle(total == nil ? .secondary : .primary)
+                .lineLimit(1)
+                .minimumScaleFactor(0.5)
+                .animation(.snappy, value: total)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 8)
+        .accessibilityElement(children: .combine)
     }
 }
 

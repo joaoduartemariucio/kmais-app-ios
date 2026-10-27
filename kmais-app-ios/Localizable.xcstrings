@@ -13,6 +13,184 @@
         }
       }
     },
+    "%@ left" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "faltam %@"
+          }
+        }
+      }
+    },
+    "%@ past due" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ além do previsto"
+          }
+        }
+      }
+    },
+    "%@/km" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@/km"
+          }
+        }
+      }
+    },
+    "%@/L" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@/L"
+          }
+        }
+      }
+    },
+    "%@/month" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@/mês"
+          }
+        }
+      }
+    },
+    "%lld due soon" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld due soon"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld due soon"
+                }
+              }
+            }
+          }
+        },
+        "pt-BR" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld em breve"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld em breve"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld overdue" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld overdue"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld overdue"
+                }
+              }
+            }
+          }
+        },
+        "pt-BR" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld atrasada"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld atrasadas"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld vehicles" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld vehicle"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld vehicles"
+                }
+              }
+            }
+          }
+        },
+        "pt-BR" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld veículo"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld veículos"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "A reminder needs a distance or a time interval." : {
       "extractionState" : "manual",
       "localizations" : {
@@ -20,6 +198,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Um lembrete precisa de intervalo em km ou em meses."
+          }
+        }
+      }
+    },
+    "ABC1D23" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ABC1D23"
           }
         }
       }
@@ -79,6 +268,28 @@
         }
       }
     },
+    "All" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tudo"
+          }
+        }
+      }
+    },
+    "Amount" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Valor"
+          }
+        }
+      }
+    },
     "Archive" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -97,6 +308,39 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Arquivados"
+          }
+        }
+      }
+    },
+    "Around %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por volta de %@"
+          }
+        }
+      }
+    },
+    "Average" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Média"
+          }
+        }
+      }
+    },
+    "Average %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Média %@"
           }
         }
       }
@@ -156,6 +400,28 @@
         }
       }
     },
+    "Consumption" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Consumo"
+          }
+        }
+      }
+    },
+    "Consumption over time" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Consumo ao longo do tempo"
+          }
+        }
+      }
+    },
     "Coolant" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -190,6 +456,17 @@
       }
     },
     "Cost per kilometer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Custo por km"
+          }
+        }
+      }
+    },
+    "Cost per km" : {
       "extractionState" : "manual",
       "localizations" : {
         "pt-BR" : {
@@ -288,6 +565,28 @@
         }
       }
     },
+    "Due soon" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Em breve"
+          }
+        }
+      }
+    },
+    "e.g. Civic, CB 500" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ex.: Civic, CB 500"
+          }
+        }
+      }
+    },
     "Edit" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -365,6 +664,17 @@
         }
       }
     },
+    "Estimate passed" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Previsão já passou"
+          }
+        }
+      }
+    },
     "Every" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -372,6 +682,121 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "A cada"
+          }
+        }
+      }
+    },
+    "Every %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A cada %@"
+          }
+        }
+      }
+    },
+    "Every %@ or %lld months" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Every %@ or month"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Every %@ or %lld months"
+                }
+              }
+            }
+          }
+        },
+        "pt-BR" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "A cada %@ ou todo mês"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "A cada %@ ou %lld meses"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Every %lld months" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Every month"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Every %lld months"
+                }
+              }
+            }
+          }
+        },
+        "pt-BR" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Todo mês"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "A cada %lld meses"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Fuel" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Combustível"
+          }
+        }
+      }
+    },
+    "Fuel %@ · Services %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Combustível %@ · Serviços %@"
           }
         }
       }
@@ -420,6 +845,28 @@
         }
       }
     },
+    "History" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Histórico"
+          }
+        }
+      }
+    },
+    "Identification" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Identificação"
+          }
+        }
+      }
+    },
     "Initial odometer" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -453,6 +900,17 @@
         }
       }
     },
+    "km/L" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "km/L"
+          }
+        }
+      }
+    },
     "Kmais" : {
       "extractionState" : "manual",
       "shouldTranslate" : false
@@ -460,6 +918,80 @@
     "L" : {
       "comment" : "Unit of measurement for liters.",
       "isCommentAutoGenerated" : true
+    },
+    "Last %lld months" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Last month"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Last %lld months"
+                }
+              }
+            }
+          }
+        },
+        "pt-BR" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Último mês"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Últimos %lld meses"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Last fuel price %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Último preço %@"
+          }
+        }
+      }
+    },
+    "Last reading: %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Última leitura: %@"
+          }
+        }
+      }
+    },
+    "Last: %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Último: %@"
+          }
+        }
+      }
     },
     "Liters" : {
       "extractionState" : "manual",
@@ -490,6 +1022,39 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Registre um abastecimento ou serviço para vê-lo aqui."
+          }
+        }
+      }
+    },
+    "Maintenance" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Manutenção"
+          }
+        }
+      }
+    },
+    "Maintenance up to date" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Manutenção em dia"
+          }
+        }
+      }
+    },
+    "Month" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mês"
           }
         }
       }
@@ -681,6 +1246,17 @@
         }
       }
     },
+    "On track" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Em dia"
+          }
+        }
+      }
+    },
     "Or every" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -699,6 +1275,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Outro"
+          }
+        }
+      }
+    },
+    "Over %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Em %@"
+          }
+        }
+      }
+    },
+    "Overdue" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Atrasada"
           }
         }
       }
@@ -725,6 +1323,17 @@
         }
       }
     },
+    "Parts, shop, warranty…" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Peças, oficina, garantia…"
+          }
+        }
+      }
+    },
     "Plate" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -732,6 +1341,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Placa"
+          }
+        }
+      }
+    },
+    "Price filled in from your last fuel-up." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preço preenchido com o do último abastecimento."
           }
         }
       }
@@ -754,6 +1374,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Preço por litro"
+          }
+        }
+      }
+    },
+    "Record type" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tipo de registro"
           }
         }
       }
@@ -824,6 +1455,39 @@
         }
       }
     },
+    "Services" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Serviços"
+          }
+        }
+      }
+    },
+    "Set up service reminders" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Configurar lembretes de manutenção"
+          }
+        }
+      }
+    },
+    "Show" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar"
+          }
+        }
+      }
+    },
     "Spark plugs" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -831,6 +1495,50 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Velas"
+          }
+        }
+      }
+    },
+    "Specs" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Especificações"
+          }
+        }
+      }
+    },
+    "Spending" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gastos"
+          }
+        }
+      }
+    },
+    "Spending per month" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gastos por mês"
+          }
+        }
+      }
+    },
+    "Spent this month" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gasto este mês"
           }
         }
       }
@@ -875,6 +1583,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "O registro anterior tem %@. Salvar assim altera o histórico do veículo."
+          }
+        }
+      }
+    },
+    "This month" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este mês"
           }
         }
       }
@@ -974,6 +1693,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Os veículos que você arquivar aparecem aqui."
+          }
+        }
+      }
+    },
+    "When" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quando"
+          }
+        }
+      }
+    },
+    "You are reminded at whichever comes first: the distance or the time." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O lembrete vem no que acontecer primeiro: a distância ou o tempo."
           }
         }
       }

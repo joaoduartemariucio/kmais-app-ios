@@ -4,38 +4,34 @@ struct ServiceEntryRow: View {
     let entry: ServiceEntry
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            HStack {
-                Label {
-                    Text(entry.kind.label)
-                } icon: {
-                    Image(systemName: entry.kind.symbolName)
+        HStack(alignment: .top, spacing: 12) {
+            SymbolBadgeView(systemName: entry.kind.symbolName, tint: .service)
+
+            VStack(alignment: .leading, spacing: 4) {
+                HStack(alignment: .firstTextBaseline) {
+                    Text(entry.kind.label).font(.headline)
+                    Spacer(minLength: 8)
+                    Text(entry.cost.formattedCurrency)
+                        .font(.headline)
+                        .monospacedDigit()
                 }
-                .font(.headline)
 
-                Spacer()
+                HStack(spacing: 8) {
+                    Text(entry.date.formattedDay)
+                    Text(entry.odometer.formattedKilometers()).monospacedDigit()
+                }
+                .font(.caption)
+                .foregroundStyle(.secondary)
 
-                Text(entry.cost.formattedCurrency).font(.headline)
-            }
-
-            ViewThatFits(in: .horizontal) {
-                HStack(spacing: 12) { details }
-                VStack(alignment: .leading, spacing: 2) { details }
-            }
-            .font(.caption)
-            .foregroundStyle(.secondary)
-
-            if !entry.notes.isEmpty {
-                Text(entry.notes).font(.caption).foregroundStyle(.secondary)
+                if !entry.notes.isEmpty {
+                    Text(entry.notes)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(2)
+                }
             }
         }
         .padding(.vertical, 2)
         .accessibilityElement(children: .combine)
-    }
-
-    @ViewBuilder
-    private var details: some View {
-        Text(entry.date.formattedDay)
-        Text(entry.odometer.formattedKilometers())
     }
 }

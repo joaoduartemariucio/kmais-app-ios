@@ -157,6 +157,40 @@ trigger the "No use-case layer" decision set for revisiting. It lives in
 `Presentation/Reminders` because it builds localized notification text; the scheduling rule
 itself is in `Domain/Calculations/ReminderPlan.swift`.
 
+### Service status: on track, due soon, overdue
+
+Each reminder shows a status computed by `Maintenance.status(of:currentOdometer:now:calendar:)`,
+counted from the last service of that kind (or the vehicle's creation).
+
+- **Overdue** only when the calendar due date has passed or the odometer reached the due km.
+  The distance-based date is an estimate from the km/day pace; a car parked for weeks must
+  not turn red just because the estimate passed.
+- **Due soon** when km left ≤ 15% of the interval, clamped to 300–1,000 km, or days left to
+  the forecast date ≤ 15% of the period, clamped to 15–30 days. The floors keep short
+  intervals (a 1,000 km chain) from warning one day ahead; the caps keep long ones (40,000 km
+  spark plugs) from warning months ahead. Same rule for cars and motorcycles.
+- Reminder notifications still say "Overdue since" from the forecast date (`ReminderPlan`),
+  which can disagree with the screen when only the pace estimate has passed.
+
+## Presentation
+
+### Dashboard on the vehicle screen
+
+The detail screen leads with the odometer and km/month, a 2×2 grid of metrics, every
+reminder with its status and progress, a km/L chart (two or more intervals) and a six-month
+spending chart (months without records count as zero), then the history with an
+All / Fuel / Services filter. Adding records moved to a bottom bar so it is one tap.
+
+### New fuel-ups start with the last price
+
+The price per liter is filled in from the latest fuel-up, with a footer saying so. Most
+fill-ups happen at the same station, so this saves typing; the field stays editable.
+
+### Category colors
+
+Fuel is teal and services indigo everywhere (rows, charts, badges). Status uses green,
+orange and red, so fuel deliberately avoids orange.
+
 ## Tooling
 
 ### Four specialized AI agents instead of one

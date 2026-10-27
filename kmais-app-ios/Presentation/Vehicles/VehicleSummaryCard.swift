@@ -3,51 +3,50 @@ import SwiftUI
 struct VehicleSummaryCard: View {
     let stats: VehicleStats
 
+    private let columns = [GridItem(.flexible(), spacing: 10), GridItem(.flexible(), spacing: 10)]
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            metric("Odometer", value: stats.currentOdometer.formattedKilometers())
-
-            metric(
-                "Average consumption",
-                value: stats.averageConsumption.map(\.formattedConsumption)
+        LazyVGrid(columns: columns, spacing: 10) {
+            MetricTileCard(
+                title: "Average consumption",
+                value: stats.averageConsumption?.formattedConsumption,
+                caption: stats.latestConsumption.map {
+                    String(localized: "Last: \($0.kilometersPerLiter.formattedConsumption)")
+                },
+                systemImage: "gauge.with.dots.needle.67percent",
+                tint: .fuel
             )
-
-            metric(
-                "Cost per kilometer",
-                value: stats.cost.costPerKilometer.map(\.formattedCurrency)
+            MetricTileCard(
+                title: "Cost per km",
+                value: stats.cost.costPerKilometer?.formattedPerKilometer,
+                caption: stats.cost.distance > 0
+                    ? String(localized: "Over \(stats.cost.distance.formattedKilometers())")
+                    : nil,
+                systemImage: "road.lanes",
+                tint: .accentColor
             )
-
-            metric("Total spent", value: stats.cost.totalCost.formattedCurrency)
-
-            if let due = stats.nextDue {
-                metric(
-                    due.rule.kind.label,
-                    value: due.forecast.dueDate.formattedFullDate,
-                    caption: due.forecast.dueOdometer.map { $0.formattedKilometers() }
-                )
-            } else {
-                metric("Next service", value: nil)
-            }
+            MetricTileCard(
+                title: "Total spent",
+                value: stats.cost.totalCost.formattedCurrency,
+                caption: breakdown,
+                systemImage: "creditcard",
+                tint: .service
+            )
+            MetricTileCard(
+                title: "This month",
+                value: stats.spentThisMonth.formattedCurrency,
+                caption: stats.lastPricePerLiter.map {
+                    String(localized: "Last fuel price \($0.formattedPerLiter)")
+                },
+                systemImage: "calendar",
+                tint: .orange
+            )
         }
-        .padding(.vertical, 4)
     }
 
-    private func metric(
-        _ title: LocalizedStringResource,
-        value: String?,
-        caption: String? = nil
-    ) -> some View {
-        LabeledContent {
-            VStack(alignment: .trailing) {
-                Text(value ?? String(localized: "Not enough data"))
-                    .foregroundStyle(value == nil ? .secondary : .primary)
-                if let caption {
-                    Text(caption).font(.caption).foregroundStyle(.secondary)
-                }
-            }
-        } label: {
-            Text(title)
-        }
-        .accessibilityElement(children: .combine)
+    private var breakdown: String {
+        let fuel = stats.cost.fuelCost.formattedCurrency
+        let services = stats.cost.serviceCost.formattedCurrency
+        return String(localized: "Fuel \(fuel) · Services \(services)")
     }
 }

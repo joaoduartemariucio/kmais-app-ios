@@ -99,4 +99,10 @@ struct ServiceEntryFormViewModelTests {
             return
         }
     }
+
+    @Test("the form shows the reading right before its date")
+    func previousReading() {
+        #expect(makeViewModel().previousReading == nil)
+        #expect(makeViewModel(otherReadings: [sample(10, 1_000), sample(60, 2_000)]).previousReading == 1_000)
+    }
 }

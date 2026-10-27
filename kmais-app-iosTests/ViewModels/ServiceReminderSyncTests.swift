@@ -95,7 +95,8 @@ struct ServiceReminderSyncTests {
                 trigger: .calendar,
                 dueOdometer: nil,
                 averageKilometersPerMonth: nil
-            )
+            ),
+            since: sample(0, 10_000)
         )
         let distanceDue = ServiceDue(
             rule: Self.oilRule,
@@ -104,7 +105,8 @@ struct ServiceReminderSyncTests {
                 trigger: .distance,
                 dueOdometer: 20_000,
                 averageKilometersPerMonth: 1_000
-            )
+            ),
+            since: sample(0, 10_000)
         )
 
         let byDate = ServiceReminderSync.reminder(
@@ -132,6 +134,7 @@ struct ServiceReminderSyncTests {
             vehicleRepository: InMemoryVehicleRepository(vehicles: [Self.vehicle]),
             fuelEntryRepository: InMemoryFuelEntryRepository(),
             serviceRepository: InMemoryServiceRepository(),
+            dateProvider: FixedDateProvider(now: day(30)),
             reminders: sync
         )
 
