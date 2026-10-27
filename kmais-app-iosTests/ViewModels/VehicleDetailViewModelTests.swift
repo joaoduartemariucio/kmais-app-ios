@@ -161,4 +161,44 @@ struct VehicleDetailViewModelTests {
         #expect(content.sections.flatMap(\.items).count == 1)
         #expect(content.stats.currentOdometer == 1_000)
     }
+
+    @Test("the history filter hides the other record type and drops empty months")
+    func filtersHistory() async {
+        let viewModel = makeViewModel(
+            fuel: [Self.fuel(1, 1_000), Self.fuel(40, 1_400)],
+            services: [
+                ServiceEntry(vehicleID: Self.vehicle.id, kind: .oilChange, date: day(2), odometer: 1_050, cost: 300)
+            ]
+        )
+        #expect(viewModel.visibleSections.isEmpty)
+        #expect(!viewModel.hasHistory)
+        #expect(viewModel.lastPricePerLiter == nil)
+
+        await viewModel.load()
+
+        #expect(viewModel.hasHistory)
+        #expect(viewModel.lastPricePerLiter == 5)
+        #expect(viewModel.visibleSections.flatMap(\.items).count == 3)
+
+        viewModel.filter = .service
+        #expect(viewModel.visibleSections.count == 1)
+        #expect(viewModel.visibleSections.flatMap(\.items).count == 1)
+
+        viewModel.filter = .fuel
+        #expect(viewModel.visibleSections.flatMap(\.items).count == 2)
+    }
+
+    @Test("spending covers the last six months")
+    func spendingMonths() async {
+        let viewModel = makeViewModel(fuel: [Self.fuel(100, 1_400)])
+
+        await viewModel.load()
+
+        guard case let .loaded(content) = viewModel.state else {
+            Issue.record("expected .loaded, got \(viewModel.state)")
+            return
+        }
+        #expect(content.spending.count == VehicleDetailViewModel.spendingMonths)
+        #expect(content.spending.reduce(Decimal.zero) { $0 + $1.total } == 200)
+    }
 }

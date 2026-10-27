@@ -35,7 +35,8 @@ default isolation is `MainActor`).
   - `Cost` — fuel and service totals, cost per km.
   - `Odometer` — current reading, the full reading history of a vehicle, and
     `neighbors(of:in:)` (the readings right before and after a date).
-  - `Maintenance` — km/month pace, next service date and odometer for a rule.
+  - `Maintenance` — km/month pace, next service date and odometer for a rule, and
+    `status(of:currentOdometer:now:calendar:)` (on track / due soon / overdue, with progress).
   - `ReminderPlan` — when to notify for each rule: 9:00 on the due day, or the next 9:00 when overdue.
 - **Protocols** — `VehicleRepository`, `FuelEntryRepository`, `ServiceRepository`,
   `DateProvider`, `ReminderScheduler`. Everything async and returning entities.
@@ -71,6 +72,12 @@ One ViewModel per screen: `@MainActor @Observable`, depending only on Domain pro
     [decisions](decisions.md#numeric-fields-are-digit-shifting-masks)).
   - `ValidationFooter` — renders issues with the right color and icon.
   - `FormatStyles` — km, liters, km/L and currency formatting for display.
+  - `Palette` — category colors (fuel, service) and status colors, labels and symbols.
+  - `SymbolBadgeView`, `MetricTileCard`, `StatusCapsuleView`, `ProgressBarView` — shared
+    building blocks of the dashboard cards.
+- **Vehicle dashboard** — `VehicleStats` gathers everything a card shows (consumption history,
+  km/L per closing fill-up, this month's spending, every reminder with its status);
+  `VehicleTimeline` groups the history by month, filters it and builds the spending chart data.
   - `.dismissesKeyboard()` — tap outside, scroll or "Done" closes the keyboard.
 - **Reminders** — `ServiceReminderSync` re-plans service notifications at the end of the
   list and detail `load()`: it gathers each active vehicle's records, asks

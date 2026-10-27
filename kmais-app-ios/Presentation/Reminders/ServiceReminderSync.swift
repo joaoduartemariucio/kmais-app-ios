@@ -67,14 +67,22 @@ final class ServiceReminderSync {
 
     static func reminder(for planned: PlannedReminder) -> Reminder {
         let forecast = planned.due.forecast
-        let date = forecast.dueDate.formattedFullDate
+        let status = planned.status
 
-        let body = if planned.isOverdue {
-            String(localized: "Overdue since \(date).")
-        } else if forecast.trigger == .distance, let odometer = forecast.dueOdometer {
-            String(localized: "Due at \(odometer.formattedKilometers()), around \(date).")
+        let lastReading = planned.currentOdometer.formattedKilometers()
+
+        let body = if status.overdueBy == .distance, let odometer = forecast.dueOdometer {
+            String(localized: "Was due at \(odometer.formattedKilometers()) (last reading \(lastReading)).")
+        } else if status.overdueBy == .calendar, let date = status.calendarDueDate {
+            String(localized: "Overdue since \(date.formattedFullDate).")
+        } else if let date = forecast.dueDate {
+            if forecast.trigger == .distance, let odometer = forecast.dueOdometer {
+                String(localized: "Due at \(odometer.formattedKilometers()), around \(date.formattedFullDate).")
+            } else {
+                String(localized: "Due on \(date.formattedFullDate).")
+            }
         } else {
-            String(localized: "Due on \(date).")
+            String(localized: "Due at \((forecast.dueOdometer ?? 0).formattedKilometers()).")
         }
 
         return Reminder(

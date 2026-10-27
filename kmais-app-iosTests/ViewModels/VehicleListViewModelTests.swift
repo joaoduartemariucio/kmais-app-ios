@@ -15,13 +15,16 @@ struct VehicleListViewModelTests {
         vehicles: [Vehicle] = [],
         fuel: [FuelEntry] = [],
         services: [ServiceEntry] = [],
+        rules: [ServiceRule] = [],
+        now: Date = day(60),
         failure: Error? = nil
     ) -> VehicleListViewModel {
         VehicleListViewModel(
             scope: scope,
             vehicleRepository: InMemoryVehicleRepository(vehicles: vehicles, failure: failure),
             fuelEntryRepository: InMemoryFuelEntryRepository(entries: fuel),
-            serviceRepository: InMemoryServiceRepository(entries: services)
+            serviceRepository: InMemoryServiceRepository(entries: services, rules: rules),
+            dateProvider: FixedDateProvider(now: now)
         )
     }
 
@@ -129,5 +132,41 @@ struct VehicleListViewModelTests {
             return
         }
         #expect(rows.isEmpty)
+    }
+
+    @Test("the overview adds up this month's spending and the reminders that need attention")
+    func overview() async {
+        let gol = makeVehicle(name: "Gol")
+        let cb = makeVehicle(name: "CB")
+        let viewModel = makeViewModel(
+            vehicles: [gol, cb],
+            fuel: [
+                FuelEntry(
+                    vehicleID: gol.id,
+                    date: day(40),
+                    odometer: 1_000,
+                    liters: 10,
+                    pricePerLiter: 5,
+                    isFullTank: true
+                )
+            ],
+            services: [
+                ServiceEntry(vehicleID: cb.id, kind: .chain, date: day(65), odometer: 500, cost: 30)
+            ],
+            rules: [
+                ServiceRule(vehicleID: cb.id, kind: .chain, kilometerInterval: 300),
+                ServiceRule(vehicleID: gol.id, kind: .oilChange, monthInterval: 1)
+            ],
+            now: day(70)
+        )
+
+        #expect(viewModel.overview == nil)
+        await viewModel.load()
+
+        let overview = viewModel.overview
+        #expect(overview?.vehicleCount == 2)
+        #expect(overview?.spentThisMonth == 30)
+        #expect(overview?.overdueCount == 1)
+        #expect(overview?.dueSoonCount == 1)
     }
 }

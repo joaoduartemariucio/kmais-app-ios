@@ -22,7 +22,7 @@ extension ServiceKind {
         case .oilChange, .oilFilter: "oilcan.fill"
         case .airFilter, .fuelFilter: "air.purifier.fill"
         case .sparkPlugs: "bolt.fill"
-        case .brakes: "brake.signal"
+        case .brakes: "brakesignal"
         case .tires: "tire"
         case .chain: "link"
         case .coolant: "thermometer.medium"

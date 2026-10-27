@@ -62,30 +62,40 @@ struct VehicleFormView: View {
 
         Form {
             Section {
-                TextField("Name", text: $viewModel.name)
                 Picker("Vehicle type", selection: $viewModel.kind) {
                     ForEach(VehicleKind.allCases, id: \.self) { kind in
-                        Text(kind.label).tag(kind)
+                        Label { Text(kind.label) } icon: { Image(systemName: kind.symbolName) }
+                            .tag(kind)
                     }
                 }
-                TextField("Plate", text: $viewModel.plate)
+                .pickerStyle(.segmented)
+                .listRowInsets(EdgeInsets())
+                .listRowBackground(Color.clear)
+            }
+
+            Section("Identification") {
+                TextField("Name", text: $viewModel.name, prompt: Text("e.g. Civic, CB 500"))
+                TextField("Plate", text: $viewModel.plate, prompt: Text("ABC1D23"))
                     .textInputAutocapitalization(.characters)
                     .autocorrectionDisabled()
+            }
+
+            Section("Specs") {
                 LabeledNumberField("Initial odometer", unit: "km", style: .kilometers, text: $viewModel.initialOdometer)
                 LabeledNumberField("Tank capacity", unit: "L", style: .liters, text: $viewModel.tankCapacity)
             }
 
-            Section("Service reminders") {
-                if viewModel.rules.isEmpty {
-                    Text("No reminders yet").foregroundStyle(.secondary)
-                } else {
-                    ForEach($viewModel.rules) { $rule in
-                        ServiceRuleRow(rule: $rule)
-                    }
-                    .onDelete { viewModel.removeRules(at: $0) }
+            Section {
+                ForEach($viewModel.rules) { $rule in
+                    ServiceRuleRow(rule: $rule)
                 }
+                .onDelete { viewModel.removeRules(at: $0) }
 
-                Button("Add reminder", systemImage: "plus") { viewModel.addRule() }
+                Button("Add reminder", systemImage: "plus.circle.fill") { viewModel.addRule() }
+            } header: {
+                Text("Service reminders")
+            } footer: {
+                Text("You are reminded at whichever comes first: the distance or the time.")
             }
 
             if case let .failed(message) = viewModel.state {
@@ -95,8 +105,10 @@ struct VehicleFormView: View {
                 }
             }
 
-            Section {
-                ValidationFooter(issues: viewModel.issues)
+            if !viewModel.issues.isEmpty {
+                Section {
+                    ValidationFooter(issues: viewModel.issues)
+                }
             }
         }
         .dismissesKeyboard()

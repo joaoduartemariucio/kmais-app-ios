@@ -21,7 +21,7 @@ struct LabeledNumberField: View {
     var body: some View {
         LabeledContent {
             HStack {
-                TextField(title, text: $text)
+                TextField(title, text: $text, prompt: Text(verbatim: NumberInput.text(Decimal.zero, style: style)))
                     .multilineTextAlignment(.trailing)
                     .keyboardType(.numberPad)
                     .onChange(of: text) { previous, current in

@@ -86,41 +86,58 @@ struct ServiceReminderSyncTests {
         #expect(await scheduler.scheduled == [pending.id: pending])
     }
 
-    @Test("the body says whether the service is overdue, due by distance or by date")
-    func bodies() {
-        let calendarDue = ServiceDue(
-            rule: Self.oilRule,
-            forecast: MaintenanceForecast(
-                dueDate: day(10),
-                trigger: .calendar,
-                dueOdometer: nil,
-                averageKilometersPerMonth: nil
-            )
+    private func planned(
+        dueDate: Date?,
+        trigger: MaintenanceForecast.Trigger,
+        dueOdometer: Double?,
+        overdueBy: MaintenanceForecast.Trigger? = nil
+    ) -> PlannedReminder {
+        PlannedReminder(
+            vehicle: Self.vehicle,
+            due: ServiceDue(
+                rule: Self.oilRule,
+                forecast: MaintenanceForecast(
+                    dueDate: dueDate,
+                    trigger: trigger,
+                    dueOdometer: dueOdometer,
+                    averageKilometersPerMonth: nil
+                ),
+                since: sample(0, 10_000)
+            ),
+            status: MaintenanceStatus(
+                level: overdueBy == nil ? .onTrack : .overdue,
+                progress: 0.5,
+                remainingKilometers: nil,
+                remainingDays: nil,
+                overdueBy: overdueBy,
+                calendarDueDate: day(8)
+            ),
+            currentOdometer: 21_234,
+            fireDate: day(10)
         )
-        let distanceDue = ServiceDue(
-            rule: Self.oilRule,
-            forecast: MaintenanceForecast(
-                dueDate: day(10),
-                trigger: .distance,
-                dueOdometer: 20_000,
-                averageKilometersPerMonth: 1_000
-            )
-        )
+    }
 
-        let byDate = ServiceReminderSync.reminder(
-            for: PlannedReminder(vehicle: Self.vehicle, due: calendarDue, fireDate: day(10), isOverdue: false)
-        )
+    @Test("the body says whether the service is overdue by km or date, or due by distance or date")
+    func bodies() {
+        let byDate = ServiceReminderSync.reminder(for: planned(dueDate: day(10), trigger: .calendar, dueOdometer: nil))
         let byDistance = ServiceReminderSync.reminder(
-            for: PlannedReminder(vehicle: Self.vehicle, due: distanceDue, fireDate: day(10), isOverdue: false)
+            for: planned(dueDate: day(10), trigger: .distance, dueOdometer: 20_000)
         )
-        let overdue = ServiceReminderSync.reminder(
-            for: PlannedReminder(vehicle: Self.vehicle, due: calendarDue, fireDate: day(11), isOverdue: true)
+        let overdueByDate = ServiceReminderSync.reminder(
+            for: planned(dueDate: day(10), trigger: .calendar, dueOdometer: nil, overdueBy: .calendar)
         )
+        let overdueByDistance = ServiceReminderSync.reminder(
+            for: planned(dueDate: nil, trigger: .distance, dueOdometer: 20_000, overdueBy: .distance)
+        )
+        let dateless = ServiceReminderSync.reminder(for: planned(dueDate: nil, trigger: .distance, dueOdometer: 20_000))
 
         #expect(byDate.id == Self.oilRule.id)
         #expect(byDate.fireDate == day(10))
-        #expect(Set([byDate.body, byDistance.body, overdue.body]).count == 3)
+        #expect(byDate.title.contains(Self.vehicle.name))
+        #expect(Set([byDate, byDistance, overdueByDate, overdueByDistance, dateless].map(\.body)).count == 5)
         #expect(byDistance.body.contains(20_000.0.formattedKilometers()))
+        #expect(overdueByDistance.body.contains(21_234.0.formattedKilometers()))
+        #expect(overdueByDate.body.contains(day(8).formattedFullDate))
     }
 
     @Test("loading the list and the detail syncs reminders")
@@ -132,6 +149,7 @@ struct ServiceReminderSyncTests {
             vehicleRepository: InMemoryVehicleRepository(vehicles: [Self.vehicle]),
             fuelEntryRepository: InMemoryFuelEntryRepository(),
             serviceRepository: InMemoryServiceRepository(),
+            dateProvider: FixedDateProvider(now: day(30)),
             reminders: sync
         )
 

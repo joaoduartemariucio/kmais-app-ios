@@ -52,7 +52,7 @@ nonisolated enum Maintenance {
             dateByCalendar = calendar.date(byAdding: .month, value: months, to: lastServiceDate)
         }
 
-        let dueDate: Date
+        let dueDate: Date?
         let trigger: MaintenanceForecast.Trigger
         switch (dateByDistance, dateByCalendar) {
         case let (byDistance?, byCalendar?):
@@ -65,7 +65,9 @@ nonisolated enum Maintenance {
             dueDate = byCalendar
             trigger = .calendar
         case (nil, nil):
-            return nil
+            guard dueOdometer != nil else { return nil }
+            dueDate = nil
+            trigger = .distance
         }
 
         return MaintenanceForecast(
@@ -89,15 +91,20 @@ nonisolated extension Maintenance {
             .filter { $0.kind == rule.kind }
             .max { $0.date < $1.date }
 
+        let since = OdometerSample(
+            date: last?.date ?? vehicle.createdAt,
+            odometer: last?.odometer ?? vehicle.initialOdometer
+        )
+
         guard let forecast = forecast(
             rule: rule,
-            lastServiceDate: last?.date ?? vehicle.createdAt,
-            lastServiceOdometer: last?.odometer ?? vehicle.initialOdometer,
+            lastServiceDate: since.date,
+            lastServiceOdometer: since.odometer,
             history: history,
             calendar: calendar
         ) else { return nil }
 
-        return ServiceDue(rule: rule, forecast: forecast)
+        return ServiceDue(rule: rule, forecast: forecast, since: since)
     }
 
     static func nextDue(
@@ -111,10 +118,83 @@ nonisolated extension Maintenance {
             .compactMap {
                 due(rule: $0, vehicle: vehicle, services: services, history: history, calendar: calendar)
             }
-            .min {
-                $0.forecast.dueDate == $1.forecast.dueDate
-                    ? $0.rule.kind.rawValue < $1.rule.kind.rawValue
-                    : $0.forecast.dueDate < $1.forecast.dueDate
+            .min { lhs, rhs in
+                switch (lhs.forecast.dueDate, rhs.forecast.dueDate) {
+                case let (left?, right?) where left != right: left < right
+                case (.some, nil): true
+                case (nil, .some): false
+                default: lhs.rule.kind.rawValue < rhs.rule.kind.rawValue
+                }
             }
+    }
+}
+
+nonisolated extension Maintenance {
+    static let dueSoonFraction = 0.15
+    static let dueSoonKilometers = 300.0...1_000.0
+    static let dueSoonDays = 15.0...30.0
+
+    static func status(
+        of due: ServiceDue,
+        currentOdometer: Double,
+        now: Date,
+        calendar: Calendar = .current
+    ) -> MaintenanceStatus {
+        let today = calendar.startOfDay(for: now)
+        let start = calendar.startOfDay(for: due.since.date)
+
+        var remainingDays: Int?
+        var dateProgress = 0.0
+        var isDueSoon = false
+        if let dueDate = due.forecast.dueDate {
+            let estimated = calendar.startOfDay(for: dueDate)
+            let remaining = days(from: today, to: estimated, calendar: calendar)
+            let periodDays = max(1, days(from: start, to: estimated, calendar: calendar))
+            remainingDays = remaining
+            dateProgress = Double(periodDays - remaining) / Double(periodDays)
+            isDueSoon = Double(remaining) <= window(for: Double(periodDays), clampedTo: dueSoonDays)
+        }
+
+        var overdueBy: MaintenanceForecast.Trigger?
+        var calendarDueDate: Date?
+        if let months = due.rule.monthInterval, months > 0 {
+            calendarDueDate = calendar.date(byAdding: .month, value: months, to: start)
+            if let calendarDueDate, calendarDueDate < today { overdueBy = .calendar }
+        }
+
+        var remainingKilometers: Double?
+        var distanceProgress = 0.0
+        if let interval = due.rule.kilometerInterval, interval > 0 {
+            let remaining = due.since.odometer + interval - currentOdometer
+            remainingKilometers = remaining
+            distanceProgress = (interval - remaining) / interval
+            if remaining <= 0, overdueBy == nil { overdueBy = .distance }
+            isDueSoon = isDueSoon || remaining <= window(for: interval, clampedTo: dueSoonKilometers)
+        }
+
+        let level: MaintenanceStatus.Level = if overdueBy != nil {
+            .overdue
+        } else if isDueSoon {
+            .dueSoon
+        } else {
+            .onTrack
+        }
+
+        return MaintenanceStatus(
+            level: level,
+            progress: min(1, max(0, distanceProgress, dateProgress)),
+            remainingKilometers: remainingKilometers,
+            remainingDays: remainingDays,
+            overdueBy: overdueBy,
+            calendarDueDate: calendarDueDate
+        )
+    }
+
+    private static func window(for length: Double, clampedTo range: ClosedRange<Double>) -> Double {
+        min(range.upperBound, max(range.lowerBound, length * dueSoonFraction))
+    }
+
+    private static func days(from start: Date, to end: Date, calendar: Calendar) -> Int {
+        calendar.dateComponents([.day], from: start, to: end).day ?? 0
     }
 }

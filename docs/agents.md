@@ -65,6 +65,14 @@ graph LR
   `executor`, followed by `reviewer` on the diff.
 - **A human always makes the final call and the commit.** No agent commits or pushes.
 
+## Skills
+
+The repo enables the [UI/UX Pro Max](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill)
+plugin in [`.claude/settings.json`](../.claude/settings.json), so anyone opening the project in
+Claude Code gets it: design guidance (styles, palettes, typography, UX rules, including a SwiftUI
+stack) for screen and visual work. Use it when designing or reviewing UI — not for domain or
+architecture decisions.
+
 ## Shared rules
 
 [`AGENTS.md`](../AGENTS.md) is the single source of truth for commands, architecture rules,

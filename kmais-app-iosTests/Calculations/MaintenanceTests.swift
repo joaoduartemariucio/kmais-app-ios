@@ -71,17 +71,15 @@ struct MaintenanceTests {
         #expect(makeForecast(kilometers: 0, months: 0) == nil)
     }
 
-    @Test("a distance-only rule without usable history forecasts no date")
-    func kilometersWithoutHistory() {
-        #expect(makeForecast(kilometers: 10_000, months: nil, history: []) == nil)
-        #expect(makeForecast(kilometers: 10_000, months: nil, history: [sample(0, 10_000)]) == nil)
-        #expect(
-            makeForecast(
-                kilometers: 10_000,
-                months: nil,
-                history: [sample(0, 10_000), sample(100, 10_000)]
-            ) == nil
-        )
+    @Test("a distance-only rule without usable history keeps its due km but has no date")
+    func kilometersWithoutHistory() throws {
+        let histories = [[], [sample(0, 10_000)], [sample(0, 10_000), sample(100, 10_000)]]
+        for history in histories {
+            let forecast = try #require(makeForecast(kilometers: 10_000, months: nil, history: history))
+            #expect(forecast.dueDate == nil)
+            #expect(forecast.dueOdometer == 20_000)
+            #expect(forecast.trigger == .distance)
+        }
     }
 
     @Test("distance comes due before the calendar")
@@ -134,7 +132,7 @@ struct MaintenanceTests {
 
         #expect(forecast.trigger == .distance)
         #expect(forecast.dueDate == day(20))
-        #expect(forecast.dueDate < day(100))
+        #expect(try #require(forecast.dueDate) < day(100))
     }
 
     @Test("a vehicle that has not moved falls back to the time rule")
@@ -303,7 +301,7 @@ struct NextServiceDueTests {
         )
 
         #expect(due.rule.kind == .chain)
-        #expect(due.forecast.dueDate < day(100))
+        #expect(try #require(due.forecast.dueDate) < day(100))
     }
 
     @Test("a tie on the due date resolves deterministically by kind")

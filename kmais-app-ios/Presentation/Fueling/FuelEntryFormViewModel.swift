@@ -15,6 +15,7 @@ final class FuelEntryFormViewModel {
     var isFullTank: Bool
 
     private(set) var state: FormState = .editing
+    private let suggestedPriceText: String?
 
     private let mode: Mode
     private let repository: FuelEntryRepository
@@ -24,18 +25,24 @@ final class FuelEntryFormViewModel {
         mode: Mode,
         repository: FuelEntryRepository,
         dateProvider: DateProvider,
-        otherReadings: [OdometerSample]
+        otherReadings: [OdometerSample],
+        suggestedPrice: Decimal? = nil
     ) {
         self.mode = mode
         self.repository = repository
         self.otherReadings = otherReadings
+        if case .create = mode, let suggestedPrice {
+            suggestedPriceText = NumberInput.text(suggestedPrice, style: .fuelPrice)
+        } else {
+            suggestedPriceText = nil
+        }
 
         switch mode {
         case .create:
             date = dateProvider.now
             odometer = ""
             liters = ""
-            pricePerLiter = ""
+            pricePerLiter = suggestedPriceText ?? ""
             isFullTank = true
         case let .edit(entry):
             date = entry.date
@@ -49,6 +56,15 @@ final class FuelEntryFormViewModel {
     var parsedOdometer: Double? { NumberInput.double(odometer, style: .kilometers) }
     var parsedLiters: Double? { NumberInput.double(liters, style: .liters) }
     var parsedPrice: Decimal? { NumberInput.decimal(pricePerLiter, style: .fuelPrice) }
+
+    var isUsingSuggestedPrice: Bool { suggestedPriceText != nil && pricePerLiter == suggestedPriceText }
+
+    var previousReading: Double? { Odometer.neighbors(of: date, in: otherReadings).previous }
+
+    var distanceSincePrevious: Double? {
+        guard let parsedOdometer, let previousReading, parsedOdometer > previousReading else { return nil }
+        return parsedOdometer - previousReading
+    }
 
     var totalCost: Decimal? {
         guard let parsedLiters, let parsedPrice else { return nil }
