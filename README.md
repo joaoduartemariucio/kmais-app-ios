@@ -15,9 +15,9 @@
 
 <p align="center">
   <img src="docs/screenshots/vehicles.webp" width="190" alt="Vehicle list">
-  <img src="docs/screenshots/vehicle-detail.webp" width="190" alt="Vehicle detail with summary and monthly timeline">
+  <img src="docs/screenshots/vehicle-detail.webp" width="190" alt="Vehicle dashboard with metrics, maintenance status and spending chart">
   <img src="docs/screenshots/fuel-form.webp" width="190" alt="New fuel-up form with validation">
-  <img src="docs/screenshots/service-types.webp" width="190" alt="New service form with service types">
+  <img src="docs/screenshots/service-types.webp" width="190" alt="New service form with the service type grid">
 </p>
 
 ## Features
