@@ -9,7 +9,7 @@
 ![Swift](https://img.shields.io/badge/Swift-SwiftUI%20%2B%20SwiftData-F05138?logo=swift&logoColor=white)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
-`Clean Architecture` · `MVVM` · `Repository` · `SOLID` · `Dependency Injection` · `Swift Concurrency` · `Swift Testing` · `CI`
+`Clean Architecture` · `MVVM` · `Repository` · `SOLID` · `Dependency Injection` · `Swift Concurrency` · `Swift Testing` · `CI` · `AI agents`
 
 </div>
 
@@ -28,6 +28,8 @@
 - **Cost** — total spent, fuel vs. service breakdown and cost per km.
 - **Maintenance rules** — oil, filters, spark plugs, brakes, tires, chain, coolant, inspection; due by km and/or by time.
 - **Forecast** — projects when the next service is due from the vehicle's own km/month pace.
+- **Reminders** — local notifications at 9:00 on the day a service is due, kept in sync as
+  you log fuel-ups and services, edit rules or archive a vehicle.
 - **Timeline** — fuel and service entries grouped by month.
 - Localized in **English and Portuguese (pt-BR)**, with locale-aware number input and units kept in km and liters.
 
@@ -132,6 +134,7 @@ Design decisions are written down instead of commented in code:
 - [Architecture](docs/architecture.md) — layers, data flow, lint rules and how to add a feature
 - [Decisions](docs/decisions.md) — what was chosen, why, and what it costs
 - [CI](docs/ci.md) — lint, format, build, test and coverage rules
+- [AI agents](docs/agents.md) — the four specialized agents used to build the app, and why
 
 ## Testing
 
@@ -176,7 +179,6 @@ make ci
 
 ## Roadmap
 
-- Local notifications for upcoming services (the `ReminderScheduler` is in place, not yet triggered by the UI).
 - Observe data with SwiftData's `ResultsObserver` (iOS 27) behind the existing repository protocols, replacing reload-after-write.
 - iCloud sync via CloudKit (schema is already compatible).
 - Promote `Domain` and `Data` to Swift packages once a second surface (widget, App Intents) needs them.

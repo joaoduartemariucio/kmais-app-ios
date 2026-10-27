@@ -39,6 +39,11 @@ def changed_lines(base, source_dir):
             match = re.search(r"\+(\d+)(?:,(\d+))?", line)
             start, count = int(match.group(1)), int(match.group(2) or 1)
             changes.setdefault(current, set()).update(range(start, start + count))
+
+    untracked = run("git", "ls-files", "--others", "--exclude-standard", "--", f"{source_dir}/*.swift").split()
+    for path in untracked:
+        with open(path) as file:
+            changes[path] = set(range(1, sum(1 for _ in file) + 1))
     return changes
 
 

@@ -121,7 +121,46 @@ the calendar-based date. Months use `365.25 / 12` days only when shown to the us
 
 A reading that goes backwards is bad data; returning the maximum would hide it.
 
-## Status
+## Reminders
 
-- **Service reminders:** `ReminderScheduler` and its `UserNotifications` implementation
-  exist, but no screen schedules notifications yet.
+### Reminders are re-planned from scratch on every sync
+
+`ServiceReminderSync` loads every active vehicle, asks `ReminderPlan` (pure, in `Domain`)
+when each rule is due, cancels pending notifications that no longer match a rule and
+schedules the rest. Each notification's id is its rule's id, so scheduling again replaces it.
+
+- **Why:** due dates move whenever anything changes — a fuel-up shifts the km/month pace, a
+  service resets the interval, a rule is edited or a vehicle archived. Recomputing everything
+  is simpler and harder to get wrong than updating reminders incrementally per event.
+- **Cost:** a sync reads all active vehicles. Fine for one driver's garage; revisit if a
+  sync ever shows up in a profile.
+
+### Sync runs at the end of the list and detail `load()`
+
+Those two screens already reload after every write and when the app opens, so syncing there
+covers every change without each form knowing about reminders.
+
+- **Cost:** a sync also runs when the user just navigates. It is idempotent and cheap.
+- **Revisit when:** reads become reactive (`ResultsObserver`) — then sync on data changes instead.
+
+### When a reminder fires
+
+At 9:00 on the due day. If that moment has passed, at the next 9:00 — an overdue service
+reminds the user once a day while the app keeps being opened, until the service is logged.
+Permission to notify is asked only when there is something to schedule. Distance-only rules
+wait until the vehicle has enough history to estimate its km/day pace.
+
+### `ServiceReminderSync` is the first use case
+
+It coordinates three repositories and the scheduler and is triggered from two screens — the
+trigger the "No use-case layer" decision set for revisiting. It lives in
+`Presentation/Reminders` because it builds localized notification text; the scheduling rule
+itself is in `Domain/Calculations/ReminderPlan.swift`.
+
+## Tooling
+
+### Four specialized AI agents instead of one
+
+Development uses four Claude Code subagents — a car and motorcycle expert, an iOS specialist,
+a reviewer and an executor — with shared rules in `AGENTS.md`. Only the executor edits code,
+and nothing is done until `make ci` passes. Rationale and workflow: [agents.md](agents.md).

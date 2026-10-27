@@ -36,6 +36,7 @@ default isolation is `MainActor`).
   - `Odometer` — current reading, the full reading history of a vehicle, and
     `neighbors(of:in:)` (the readings right before and after a date).
   - `Maintenance` — km/month pace, next service date and odometer for a rule.
+  - `ReminderPlan` — when to notify for each rule: 9:00 on the due day, or the next 9:00 when overdue.
 - **Protocols** — `VehicleRepository`, `FuelEntryRepository`, `ServiceRepository`,
   `DateProvider`, `ReminderScheduler`. Everything async and returning entities.
 
@@ -71,6 +72,11 @@ One ViewModel per screen: `@MainActor @Observable`, depending only on Domain pro
   - `ValidationFooter` — renders issues with the right color and icon.
   - `FormatStyles` — km, liters, km/L and currency formatting for display.
   - `.dismissesKeyboard()` — tap outside, scroll or "Done" closes the keyboard.
+- **Reminders** — `ServiceReminderSync` re-plans service notifications at the end of the
+  list and detail `load()`: it gathers each active vehicle's records, asks
+  `ReminderPlan.reminders(for:now:calendar:)` (Domain) when each rule is due, cancels stale
+  notifications and schedules the rest through `ReminderScheduler`. See
+  [decisions](decisions.md#reminders).
 
 ## App
 

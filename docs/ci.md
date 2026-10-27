@@ -82,6 +82,7 @@ modified by the change, at least **80%** must run during the tests.
 1. diffs the change against its base, ignoring whitespace-only edits:
    - **pull request** → the PR's base commit;
    - **push** → the commit the branch was at before the push (`origin/main` for a new branch);
+   - **locally** → `origin/main`, including uncommitted edits; files not yet added to git count in full;
 2. reads per-line execution counts from the `.xcresult` with `xccov`;
 3. keeps only executable lines (comments, braces and declarations never count) in files not
    listed in [`.coverageignore`](../.coverageignore);
