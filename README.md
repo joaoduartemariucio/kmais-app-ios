@@ -58,7 +58,7 @@ Highlights:
 - **Money in `Decimal`**, never `Double` arithmetic.
 - **SwiftData stays behind protocols.** Repositories are `@ModelActor`s that map `@Model`
   types to plain `Sendable` structs. Views never see a `@Model` — which is why the app does
-  not use `@Query` (trade-off documented in the ADR).
+  not use `@Query` (trade-off in [decisions](docs/decisions.md#no-query)).
 - **CloudKit-ready schema** (no unique constraints, optional relationships), with orphaned
   records detected and logged by the mappers.
 - **Swift 6 concurrency-clean** — main-actor default isolation, `nonisolated` domain, zero
@@ -89,11 +89,10 @@ kmais-app-ios/
 └── Presentation/   # Vehicles, Fueling, Maintenance, Common (forms, formatting, validation)
 ```
 
-Design decisions are written down instead of commented in code (in Portuguese):
+Design decisions are written down instead of commented in code:
 
-- [Architecture overview](docs/arquitetura.md)
-- [ADR 0001 — Repository + MVVM in a single target](docs/adr/0001-arquitetura.md)
-- [Implementation decisions](docs/decisoes-de-implementacao.md)
+- [Architecture](docs/architecture.md) — layers, data flow, lint rules and how to add a feature
+- [Decisions](docs/decisions.md) — what was chosen, why, and what it costs
 
 ## Testing
 
