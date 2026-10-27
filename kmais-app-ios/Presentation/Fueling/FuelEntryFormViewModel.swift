@@ -75,10 +75,10 @@ final class FuelEntryFormViewModel {
         return issues
     }
 
-    var canSave: Bool { issues.isEmpty && !state.isSaving }
+    var canSave: Bool { !issues.blocksSaving && !state.isSaving }
 
     func save() async {
-        guard let parsedOdometer, let parsedLiters, let parsedPrice, issues.isEmpty else { return }
+        guard let parsedOdometer, let parsedLiters, let parsedPrice, !issues.blocksSaving else { return }
 
         state = .saving
         do {

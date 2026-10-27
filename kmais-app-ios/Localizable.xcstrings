@@ -813,24 +813,24 @@
         }
       }
     },
-    "The odometer must be above the previous record (%@)." : {
+    "The next record has %@. Saving this changes the vehicle's history." : {
       "extractionState" : "manual",
       "localizations" : {
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O odômetro precisa ser maior que o do registro anterior (%@)."
+            "value" : "O registro seguinte tem %@. Salvar assim altera o histórico do veículo."
           }
         }
       }
     },
-    "The odometer must be below the next record (%@)." : {
+    "The previous record has %@. Saving this changes the vehicle's history." : {
       "extractionState" : "manual",
       "localizations" : {
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O odômetro precisa ser menor que o do registro seguinte (%@)."
+            "value" : "O registro anterior tem %@. Salvar assim altera o histórico do veículo."
           }
         }
       }

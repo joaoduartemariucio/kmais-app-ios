@@ -10,10 +10,10 @@ struct ValidationFooter: View {
                     Label {
                         Text(issue.message)
                     } icon: {
-                        Image(systemName: "exclamationmark.triangle.fill")
+                        Image(systemName: issue.isBlocking ? "exclamationmark.triangle.fill" : "info.circle.fill")
                     }
                     .font(.footnote)
-                    .foregroundStyle(.red)
+                    .foregroundStyle(issue.isBlocking ? .red : .orange)
                 }
             }
             .accessibilityElement(children: .combine)

@@ -108,7 +108,7 @@ final class VehicleFormViewModel {
         return issues
     }
 
-    var canSave: Bool { issues.isEmpty && !state.isSaving }
+    var canSave: Bool { !issues.blocksSaving && !state.isSaving }
 
     func addRule() {
         rules.append(RuleDraft())
@@ -121,7 +121,7 @@ final class VehicleFormViewModel {
     }
 
     func save() async {
-        guard issues.isEmpty else { return }
+        guard !issues.blocksSaving else { return }
 
         state = .saving
         let vehicle = self.vehicle()

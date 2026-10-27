@@ -14,6 +14,13 @@ enum ValidationIssue: Hashable, Identifiable {
 
     var id: Self { self }
 
+    var isBlocking: Bool {
+        switch self {
+        case .odometerNotAfterPrevious, .odometerNotBeforeNext: false
+        default: true
+        }
+    }
+
     var message: LocalizedStringResource {
         switch self {
         case .nameRequired:
@@ -21,9 +28,9 @@ enum ValidationIssue: Hashable, Identifiable {
         case .odometerRequired:
             "Enter the odometer reading."
         case .odometerNotAfterPrevious(let previous):
-            "The odometer must be above the previous record (\(previous.formattedKilometers()))."
+            "The previous record has \(previous.formattedKilometers()). Saving this changes the vehicle's history."
         case .odometerNotBeforeNext(let next):
-            "The odometer must be below the next record (\(next.formattedKilometers()))."
+            "The next record has \(next.formattedKilometers()). Saving this changes the vehicle's history."
         case .litersRequired:
             "Enter how many liters you filled."
         case .litersNotPositive:
@@ -58,4 +65,8 @@ extension ValidationIssue {
         }
         return issues
     }
+}
+
+extension [ValidationIssue] {
+    var blocksSaving: Bool { contains(where: \.isBlocking) }
 }

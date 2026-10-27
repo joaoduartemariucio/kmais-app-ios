@@ -60,10 +60,10 @@ final class ServiceEntryFormViewModel {
         return issues
     }
 
-    var canSave: Bool { issues.isEmpty && !state.isSaving }
+    var canSave: Bool { !issues.blocksSaving && !state.isSaving }
 
     func save() async {
-        guard let parsedOdometer, issues.isEmpty else { return }
+        guard let parsedOdometer, !issues.blocksSaving else { return }
 
         state = .saving
         do {
