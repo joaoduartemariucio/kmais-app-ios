@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  lint-and-test:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+
+      # Ao contrário da fase de build local, aqui a ausência do SwiftLint é
+      # falha: lint que só roda na máquina de quem escreveu não é fronteira.
+      - name: Install SwiftLint
+        run: |
+          brew install swiftlint
+          swiftlint version
+
+      - name: Lint
+        run: swiftlint lint --strict --config .swiftlint.yml
+
+      - name: Domain calculations tests
+        run: |
+          xcodebuild test \
+            -project kmais-app-ios.xcodeproj \
+            -scheme kmais-app-ios \
+            -destination 'platform=iOS Simulator,OS=latest,name=iPhone 16 Pro' \
+            -only-testing:kmais-app-iosTests \
+            CODE_SIGNING_ALLOWED=NO \
+            | xcbeautify --renderer github-actions || exit ${PIPESTATUS[0]}
