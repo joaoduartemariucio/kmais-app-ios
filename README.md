@@ -11,13 +11,12 @@
 
 </div>
 
-<!-- Screenshots: add images to docs/screenshots/ and reference them here, e.g.
 <p align="center">
-  <img src="docs/screenshots/vehicles.png" width="240">
-  <img src="docs/screenshots/detail.png" width="240">
-  <img src="docs/screenshots/fuel-form.png" width="240">
+  <img src="docs/screenshots/vehicles.webp" width="190" alt="Vehicle list">
+  <img src="docs/screenshots/vehicle-detail.webp" width="190" alt="Vehicle detail with summary and monthly timeline">
+  <img src="docs/screenshots/fuel-form.webp" width="190" alt="New fuel-up form with validation">
+  <img src="docs/screenshots/service-types.webp" width="190" alt="New service form with service types">
 </p>
--->
 
 ## Features
 
